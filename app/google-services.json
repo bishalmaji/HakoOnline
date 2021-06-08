@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "518654146741",
+    "firebase_url": "https://bubbleshooter-99493-default-rtdb.firebaseio.com",
+    "project_id": "bubbleshooter-99493",
+    "storage_bucket": "bubbleshooter-99493.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518654146741:android:dfcbe2a7ad54a897f966fc",
+        "android_client_info": {
+          "package_name": "com.game.dreamproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzyMoG1xYewRUZAIPaNw55SszUiOGUdUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518654146741:android:acfe14f452d93ea8f966fc",
+        "android_client_info": {
+          "package_name": "com.hako.dreamproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "518654146741-ls7ljajl7op5qiitliqme001l7tvhbfm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hako.dreamproject",
+            "certificate_hash": "ceda3aee41f2d4f0ec8cfada552a5bca04567047"
+          }
+        },
+        {
+          "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzyMoG1xYewRUZAIPaNw55SszUiOGUdUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
