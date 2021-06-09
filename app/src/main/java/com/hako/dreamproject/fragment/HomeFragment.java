@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.hako.dreamproject.HomeActivity;
 import com.hako.dreamproject.LoginActivity;
 import com.hako.dreamproject.PlayerSearching;
 import com.hako.dreamproject.R;
@@ -143,6 +144,13 @@ public class HomeFragment extends Fragment {
         swipetoRefresh.setOnRefreshListener(() -> {
             swipetoRefresh.setRefreshing(true);
             getPlayerData();
+        });
+        ivUserProfile.setOnClickListener(view -> {
+            Fragment fragment = new ProfileFragment();
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment, fragment)
+                    .addToBackStack(null)
+                    .commit();
         });
         random.setOnClickListener(view -> {
             if (gameModelList.size()>0) {

@@ -89,7 +89,11 @@ public class ChatFragment extends Fragment{
                         if(task.isSuccessful()){
                             ArrayList<chatRoom> chatRooms = new ArrayList<>();
                             for(QueryDocumentSnapshot document: task.getResult()){
-                                chatRooms.add(document.toObject(chatRoom.class));
+                                try{
+                                    chatRooms.add(document.toObject(chatRoom.class));
+                                }catch (Exception e){
+                                    Log.e(TAG_CHAT_FRAGMENT, "95 Exception: " + e.getMessage());
+                                }
                             }
                             setUpRecyclerView(chatRooms);
                         }

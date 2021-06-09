@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
@@ -80,14 +81,10 @@ public class MainActivity extends AppCompatActivity {
     String icon;
     String entryFee;
     String roomid;
-    TextView secondScore;
     boolean check = true;
-    CircleImageView userpic;
-    LinearLayout loading;
-    FrameLayout frameTwo;
-    ImageView gameicon;
-    TextView gameName;
     String gname;
+
+    ConstraintLayout clPokerTable;
 
     String TAG_MAIN_ACTIVITY = "mainActivity";
 
@@ -103,13 +100,11 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        secondScore = findViewById(R.id.score);
-        userpic = findViewById(R.id.pic);
-        gameicon = findViewById(R.id.gameIcon);
-        gameName = findViewById(R.id.gameName);
+
         webView = findViewById(R.id.webview);
-        loading = findViewById(R.id.frameOne);
-        frameTwo = findViewById(R.id.frametwo);
+        clPokerTable = findViewById(R.id.cl_mainActivity_pokerTable);
+
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String data = extras.getString(DATA);
@@ -129,13 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 pic = extra.getString(PIC);
                 icon = extra.getString(GAMEICON);
                 entryFee = extra.getString(ENTRY);
-                Glide.with(getApplicationContext()).load(pic).into(gameicon);
-                gameName.setText(name);
                 roomid = gameId;
-                Glide.with(getApplicationContext()).load(pic)
-                        .placeholder(R.drawable.profile_holder)
-                        .error(R.drawable.profile_holder)
-                        .into(userpic);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG_MAIN_ACTIVITY, "In Catch: " +  e.getMessage());
@@ -167,8 +156,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         new Handler().postDelayed(() -> {
-            loading.setVisibility(View.GONE);
-            frameTwo.setVisibility(View.VISIBLE);
+
+            webView.setVisibility(View.VISIBLE);
+            clPokerTable.setVisibility(View.GONE);
 
             databaseReference.child(secondUserid)
                     .addValueEventListener(new ValueEventListener() {
@@ -178,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         if (user != null) {
                             Log.e(TAG_MAIN_ACTIVITY, "In Handler Online: " + user.getOnline() + ", Time " + user.getTime() + ", Score " + user.getScore() + ", status " + user.getStatus());
-                            secondScore.setText(user.getScore());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

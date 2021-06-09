@@ -100,6 +100,11 @@ public class HomeActivity extends AppCompatActivity {
 
         loadFragment(new HomeFragment());
 
+        ClickShrinkEffectKt.applyClickShrink(homePressed);
+        ClickShrinkEffectKt.applyClickShrink(chatPressed);
+        ClickShrinkEffectKt.applyClickShrink(rewardPressed);
+        ClickShrinkEffectKt.applyClickShrink(mePressed);
+
         homeIcon.setImageResource(R.drawable.joystick_selected);
 
         homePressed.setOnClickListener(view -> {

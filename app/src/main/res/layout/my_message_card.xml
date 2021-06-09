@@ -32,7 +32,7 @@
                 android:layout_gravity="right"
                 android:autoSizeTextType="uniform"
                 android:background="@drawable/my_message"
-                android:padding="@dimen/dimen_15dp"
+                android:padding="@dimen/dimen_10dp"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -50,7 +50,7 @@
         android:id="@+id/cL_myMessageCard_playerMessage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:autoSizeTextType="uniform"
                 android:background="@drawable/player_message"
-                android:padding="@dimen/dimen_15dp"
+                android:padding="@dimen/dimen_10dp"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
         </LinearLayout>
