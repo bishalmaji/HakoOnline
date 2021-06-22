@@ -28,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -59,9 +61,9 @@ public class LoginActivity extends AppCompatActivity {
         packman = findViewById(R.id.img_hori);
         goodmoring = findViewById(R.id.goodmorning);
         String greeting = null;
-        Date dt = new Date();
-        int hours = dt.getHours();
-        if (hours >= 1 && hours <= 12) {
+        Calendar rightNow = Calendar.getInstance();
+        int hours = rightNow.get(Calendar.HOUR_OF_DAY);
+        if (hours >= 0 && hours <= 12) {
             greeting = "Good Morning";
         } else if (hours >= 12 && hours <= 16) {
             greeting = "Good Afternoon";
@@ -75,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
-                //.requestIdToken("735929854041-kig5f76te5rhaab3q9qe1m6h4m2vf7vt.apps.googleusercontent.com")
+//                .requestIdToken("735929854041-kig5f76te5rhaab3q9qe1m6h4m2vf7vt.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         //Then we will get the GoogleSignInClient object from GoogleSignIn class

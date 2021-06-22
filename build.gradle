@@ -2,8 +2,8 @@
 buildscript {
     repositories {
         google()
-        jcenter()
         maven { url 'https://plugins.gradle.org/m2/'}
+        jcenter()
     }
     dependencies {
 
@@ -19,13 +19,13 @@ allprojects {
     repositories {
 
         google()
-        jcenter()
 
         maven { url 'https://jitpack.io' }
         maven {
             url "https://artifactory.paytm.in/libs-release-local"
         }
 
+        jcenter()
     }
 }
 

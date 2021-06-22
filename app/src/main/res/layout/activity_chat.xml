@@ -174,10 +174,21 @@
                 android:id="@+id/iv_chatActivity_followPlayer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/follow_player"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout3"
+                app:layout_constraintTop_toTopOf="@+id/constraintLayout3" />
+
+            <ImageView
+                android:id="@+id/iv_chatActivity_audioSwitch"
+                android:visibility="visible"
+                android:src="@drawable/ic_audio_mic_off"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toEndOf="@+id/iv_chatActivity_followPlayer"
                 app:layout_constraintTop_toTopOf="@+id/constraintLayout3" />
 
             <ImageView

@@ -1,5 +1,6 @@
 package com.hako.dreamproject.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -41,6 +42,8 @@ public class ChatFragment extends Fragment{
     // RecyclerView
     private RecyclerView rvGroupChats;
 
+    GroupChatAdapter adapter;
+
     // Firebase
     FirebaseFirestore db;
 
@@ -77,6 +80,7 @@ public class ChatFragment extends Fragment{
         rvGroupChats = root.findViewById(R.id.rv_chat_groupChat);
     }
     private void getChatRoomsFromFirebase(String myId){
+
         Log.d(TAG_CHAT_FRAGMENT, "myId: " + myId);
         CollectionReference colRef = db.collection("USERS").document(myId)
                 .collection("chatRooms");
@@ -102,23 +106,27 @@ public class ChatFragment extends Fragment{
     }
     private void setUpRecyclerView(ArrayList<chatRoom> chatRooms){
 
-        GroupChatAdapter adapter = new GroupChatAdapter(requireActivity(), chatRooms, new GroupChatAdapter.OnItemClickListener(){
-            @Override
-            public void onItemClick(chatRoom chatRoom) {
-                Intent intent = new Intent(getActivity(), chatActivity.class);
-                intent.putExtra("chatRoomId", chatRoom.getChatRoomId());
-                intent.putExtra("myScore", chatRoom.getMyScore());
-                intent.putExtra("freindScore", chatRoom.getFriendScore());
-                intent.putExtra("freindProfile",chatRoom.getFriendProfile());
-                intent.putExtra("freindName", chatRoom.getFriendName());
-                intent.putExtra("reciverId", chatRoom.getFriendId());
-                startActivity(intent);
-            }
-        });
-        rvGroupChats.setAdapter(new AlphaInAnimationAdapter(adapter));
-        rvGroupChats.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        rvGroupChats.setHasFixedSize(true);
-        rvGroupChats.setItemAnimator(new DefaultItemAnimator());
+        Activity activity = getActivity();
+        if(activity!=null && isAdded() && chatRooms.size()>0) {
+            adapter = new GroupChatAdapter(requireActivity(), chatRooms, new GroupChatAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(chatRoom chatRoom) {
+                    Intent intent = new Intent(getActivity(), chatActivity.class);
+                    intent.putExtra("chatRoomId", chatRoom.getChatRoomId());
+                    intent.putExtra("myScore", chatRoom.getMyScore());
+                    intent.putExtra("freindScore", chatRoom.getFriendScore());
+                    intent.putExtra("freindProfile", chatRoom.getFriendProfile());
+                    intent.putExtra("freindName", chatRoom.getFriendName());
+                    intent.putExtra("reciverId", chatRoom.getFriendId());
+                    startActivity(intent);
+                }
+            });
+
+            rvGroupChats.setAdapter(new AlphaInAnimationAdapter(adapter));
+            rvGroupChats.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+            rvGroupChats.setHasFixedSize(true);
+            rvGroupChats.setItemAnimator(new DefaultItemAnimator());
+        }
     }
 
 }

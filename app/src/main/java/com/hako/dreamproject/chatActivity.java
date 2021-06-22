@@ -3,11 +3,14 @@ package com.hako.dreamproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -37,6 +40,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.core.OrderBy;
 import com.hako.dreamproject.adapters.chat.MessagesAdapter;
 import com.hako.dreamproject.adapters.chat.chatGameAdapter;
+import com.hako.dreamproject.audiochat.QuickStartActivity;
 import com.hako.dreamproject.model.GameModel;
 import com.hako.dreamproject.model.GameRequest;
 import com.hako.dreamproject.model.Message;
@@ -52,6 +56,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -77,6 +82,7 @@ public class chatActivity extends AppCompatActivity {
     private ImageView ivFollowPlayer;
     private  ImageView ivSendMessage;
     private ImageView ivShowEmoji;
+    private ImageView ivSwitchAudio;
 
     // ConstraintLayout
     private ConstraintLayout cLSelectedGame, cLSelectedGameBackground;
@@ -122,6 +128,11 @@ public class chatActivity extends AppCompatActivity {
     int myScore, friendScore;
     String reciverId, freindProfileImage, freindName;
 
+    //Count
+    int count = 0;
+
+    private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +152,7 @@ public class chatActivity extends AppCompatActivity {
         myProfileImage = AppController.getInstance().getProfile();
         myName = AppController.getInstance().getName();
 
+        setAudioChat();
         setViews();
         setOnClickListners();
         clickShrinkEffect();
@@ -151,6 +163,22 @@ public class chatActivity extends AppCompatActivity {
         setRequestListner();
 
     }
+
+    private void setAudioChat() {
+        String roomId = myId + reciverId;
+        // convert input string to char array
+        char tempArray[] = roomId.toCharArray();
+
+        // sort tempArray
+        Arrays.sort(tempArray);
+
+        // return new sorted string
+        roomId = new String(tempArray);
+        QuickStartActivity quickStartActivity = new QuickStartActivity();
+        quickStartActivity.createEngineButtonClick(this, myId, reciverId, myId);
+        Log.e("chatActivity", "myId - "+myId+" receiverID - "+reciverId);
+    }
+
     private void setViews(){
         //ImageView
         ivBack = findViewById(R.id.iv_chatActivity_backPressed);
@@ -159,6 +187,7 @@ public class chatActivity extends AppCompatActivity {
         ivFollowPlayer = findViewById(R.id.iv_chatActivity_followPlayer);
         ivSendMessage = findViewById(R.id.iv_chatActivity_sendMessage);
         ivShowEmoji = findViewById(R.id.iv_chatActivity_showEmoji);
+        ivSwitchAudio = findViewById(R.id.iv_chatActivity_audioSwitch);
 
         // TextView
         tvRequestedGameName = findViewById(R.id.tv_chatActivity_requestedGameName);
@@ -208,7 +237,15 @@ public class chatActivity extends AppCompatActivity {
         ivShowEmoji.setOnClickListener( view -> {
             handleShowEmoji();
         });
+        ivSwitchAudio.setOnClickListener( VIEW -> {
+            count++;
+            ivSwitchAudio.setVisibility(View.INVISIBLE);
+            requestAudioPermissions();
+        });
     }
+
+
+
     private void clickShrinkEffect(){
         ClickShrinkEffectKt.applyClickShrink(tvPlayRequestedGame);
         ClickShrinkEffectKt.applyClickShrink(tvRejectGameRequest);
@@ -311,7 +348,7 @@ public class chatActivity extends AppCompatActivity {
         });
         rvGames.setItemAnimator(new DefaultItemAnimator());
         rvGames.setHasFixedSize(true);
-        rvGames.setLayoutManager(new LinearLayoutManager(chatActivity.this, LinearLayout.HORIZONTAL, false));
+        rvGames.setLayoutManager(new LinearLayoutManager(chatActivity.this, RecyclerView.HORIZONTAL, false));
         rvGames.setAdapter(adapter);
         rvGames.setVisibility(View.VISIBLE);
         rvGames.setAdapter(new ScaleInAnimationAdapter(new AlphaInAnimationAdapter(adapter)));
@@ -342,7 +379,7 @@ public class chatActivity extends AppCompatActivity {
         ArrayList<Message> messages = new ArrayList<>();
         messagesAdapter = new MessagesAdapter(this, messages, myId);
         rvMessages.setAdapter(messagesAdapter);
-        rvMessages.setLayoutManager(new LinearLayoutManager(chatActivity.this, LinearLayout.VERTICAL, false));
+        rvMessages.setLayoutManager(new LinearLayoutManager(chatActivity.this, RecyclerView.VERTICAL, false));
 
         rvMessages.setItemAnimator(new DefaultItemAnimator());
         rvMessages.setHasFixedSize(true);
@@ -437,6 +474,23 @@ public class chatActivity extends AppCompatActivity {
     }
 
 
+    // Switch Mic
+    private void switchMic() {
+        if(count%2==0)
+        {
+            QuickStartActivity quickStartActivity = new QuickStartActivity();
+            quickStartActivity.onDestroy();
+            quickStartActivity.createEngineButtonClick(this, myId, reciverId, myId);
+            ivSwitchAudio.setVisibility(View.VISIBLE);
+            ivSwitchAudio.setImageResource(R.drawable.ic_audio_mic_off);
+        }
+        else {
+            QuickStartActivity quickStartActivity = new QuickStartActivity();
+            quickStartActivity.startPublishingButtonClick(myId);
+            ivSwitchAudio.setVisibility(View.VISIBLE);
+            ivSwitchAudio.setImageResource(R.drawable.ic_audio_mic_on);
+        }
+    }
     //Handle Follow
     private void handleFollow(){
         Follow = Follow == true ? false : true;
@@ -607,6 +661,60 @@ public class chatActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        QuickStartActivity quickStartActivity = new QuickStartActivity();
+        quickStartActivity.onDestroy();
         super.onBackPressed();
+    }
+
+    private void requestAudioPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            //When permission is not granted by user, show them message why this permission is needed.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.RECORD_AUDIO)) {
+                Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG).show();
+
+                //Give user option to still opt-in the permissions
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.RECORD_AUDIO},
+                        MY_PERMISSIONS_RECORD_AUDIO);
+
+            } else {
+                // Show user dialog to grant permission to record audio
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.RECORD_AUDIO},
+                        MY_PERMISSIONS_RECORD_AUDIO);
+            }
+        }
+        //If permission is granted, then go ahead recording audio
+        else if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            //Go ahead with recording audio now
+            switchMic();
+        }
+    }
+
+    //Handling callback
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_RECORD_AUDIO: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    switchMic();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Permissions Denied to record audio", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
     }
 }

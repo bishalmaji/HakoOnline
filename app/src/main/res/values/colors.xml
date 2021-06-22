@@ -34,4 +34,6 @@
 <!--    Theme Color     -->
     <color name="primaryThemeColor">#FBD660</color>
 
+    <color name="orange">#ECAD2E</color>
+
 </resources>
