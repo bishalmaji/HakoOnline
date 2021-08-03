@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/hoko-app/app/src/main/res/layout/home_fragment.xml" value="0.24259259259259258" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/hoko-app/app/src/main/res/layout/splash_activity.xml" value="0.20185185185185187" />
+      </map>
+    </option>
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.NonNull" />
