@@ -18,6 +18,7 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +27,18 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.hako.dreamproject.ActivityTracker;
 import com.hako.dreamproject.HomeActivity;
 import com.hako.dreamproject.LoginActivity;
+import com.hako.dreamproject.PlayWithFriends;
 import com.hako.dreamproject.PlayerSearching;
 import com.hako.dreamproject.R;
 import com.hako.dreamproject.activities.QuizActivity;
@@ -42,7 +47,6 @@ import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.RequestHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.hako.dreamproject.utils.UsableFunctions;
-import com.hardik.clickshrinkeffect.ClickShrinkEffectKt;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,13 +87,10 @@ public class HomeFragment extends Fragment {
     RecyclerView rvMore;
     SwipeRefreshLayout swipetoRefresh;
     BottomSheetDialog bottomSheetDialog;
-    LinearLayout loading;
+    LinearLayout loading, playWithFriends;
     LinearLayout noItem;
     NestedScrollView scrollView;
-
-    // ImageView
-    ImageView random;
-    ImageView ivUserProfile;
+    ImageView ivUserProfile, homeGif1, homeGif2;
 
     Random randoms;
     ImageView daily;
@@ -107,9 +108,33 @@ public class HomeFragment extends Fragment {
         setViews();
         setOnClickListener();
 
-        ClickShrinkEffectKt.applyClickShrink(daily);
+//        ClickShrinkEffectKt.applyClickShrink(daily);
 
         loading.setVisibility(View.VISIBLE);
+        TextView points = rootView.findViewById(R.id.points);
+        if(AppController.getInstance().getCoins()!=null)
+            points.setText(numberCalculation(Integer.parseInt(AppController.getInstance().getCoins())));
+        else
+            points.setText("0");
+
+
+        points.setOnClickListener(v -> {
+            Fragment fragment = new RewardFragment();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment, fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        });
+
+        playWithFriends = rootView.findViewById(R.id.imageView5);
+        playWithFriends.setOnClickListener(v -> startActivity(new Intent(getContext(), PlayWithFriends.class)));
+
+        homeGif1 = rootView.findViewById(R.id.home_screen_gif1);
+        homeGif2 = rootView.findViewById(R.id.home_screen_gif2);
+
+        Glide.with(this).load(R.drawable.splash_screen_gif).into(homeGif1);
+        Glide.with(this).load(R.drawable.homegif2).into(homeGif2);
 
         if(UsableFunctions.checkLoggedInOrNot()){
             Glide.with(requireContext())
@@ -131,7 +156,6 @@ public class HomeFragment extends Fragment {
         bottomSheetDialog = new BottomSheetDialog(getActivity());
         loading = rootView.findViewById(R.id.loading);
         scrollView = rootView.findViewById(R.id.scrollview);
-        random = rootView.findViewById(R.id.random);
         scrollView.setVisibility(View.GONE);
         daily = rootView.findViewById(R.id.daily);
 
@@ -151,13 +175,8 @@ public class HomeFragment extends Fragment {
                     .replace(R.id.fragment, fragment)
                     .addToBackStack(null)
                     .commit();
-        });
-        random.setOnClickListener(view -> {
-            if (gameModelList.size()>0) {
-                random();
-            } else {
-                Toast.makeText(getActivity(), "Loading..", Toast.LENGTH_LONG).show();
-            }
+
+
         });
         daily.setOnClickListener(view -> {
             if(AppController.getInstance().getId().equalsIgnoreCase("0")){
@@ -314,26 +333,36 @@ public class HomeFragment extends Fragment {
             myHolder.name.setText(current.getName());
             String a = numberCalculation(Integer.parseInt(current.getPlaying()));
             myHolder.playing.setText(current.getPlaying() + " playing");
-            switch (current.getName()){
-                case "Sheep Fight": myHolder.clGame.setBackground(context.getDrawable(R.drawable.sheep_fight)); break;
-                case "HEXA GONA":    myHolder.clGame.setBackground(context.getDrawable(R.drawable.hexa_gona)); break;
-                case "BULL FIGHT":    myHolder.clGame.setBackground(context.getDrawable(R.drawable.bull_fight)); break;
-                case "Bubble Shooter":    myHolder.clGame.setBackground(context.getDrawable(R.drawable.bubble_shooter)); break;
-                default:  myHolder.clGame.setBackground(context.getDrawable(R.drawable.test_game)); break;
+            switch (current.getName()) {
+                case "Sheep Fight":
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.sheep_fight_home_logo));
+                    break;
+                case "Ludo":
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.wizard_hex_home_crop));
+                    break;
+                case "BULL FIGHT":
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.bull_fight_home_crop));
+                    break;
+                case "Bubble Shooter":
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.bubble_shooter_home_crop));
+                    break;
+                default:
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.test_game));
+                    break;
             }
 
             try {
-//                Glide.with(context)
-//                        .load(current.getImage())
-//                        .placeholder(R.drawable.test_game)
-//                        .into(myHolder.image);
+                //                Glide.with(context)
+                //                        .load(current.getImage())
+                //                        .placeholder(R.drawable.test_game)
+                //                        .into(myHolder.image);
             } catch (Exception e) {
-                Log.e(TAG_HOME_FRAGMENT, "exp: " +  e.getMessage());
+                Log.e(TAG_HOME_FRAGMENT, "exp: " + e.getMessage());
             }
-            myHolder.holdres.setOnClickListener(view ->
+            myHolder.holdres.setOnClickListener(
+                    view ->
                     startGame(current.getId(), current.getName(), current.getImage(), current.getUrl(), current.getRotation())
             );
-            ClickShrinkEffectKt.applyClickShrink(myHolder.holdres);
 
         }
 
@@ -355,8 +384,8 @@ public class HomeFragment extends Fragment {
             TextView name;
             TextView playing;
             ImageView image;
-            CardView holdres;
-            ConstraintLayout clGame;
+            ConstraintLayout holdres;
+            ImageView clGame;
 
             public MyHolder(View itemView) {
                 super(itemView);
@@ -446,10 +475,9 @@ public class HomeFragment extends Fragment {
                     Log.e(ERROR, e.getMessage());
                 }
                 myHolder.holders.setOnClickListener(view ->
-                        join(current.getId(), current.getName(), current.getImage(), current.getUrl(), current.getRotation())
+                        join(current.getId(), current.getName(), current.getImage(), current.getUrl(), current.getRotation(), position)
                 );
             }
-            ClickShrinkEffectKt.applyClickShrink(myHolder.holders);
 
 
         }
@@ -478,7 +506,7 @@ public class HomeFragment extends Fragment {
     }
 
     @SuppressLint("SetTextI18n")
-    public void join(String id, String names, String image, String url, String rotation) {
+    public void join(String id, String names, String image, String url, String rotation, int position) {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.entryfee_layout, null);
 
@@ -502,7 +530,9 @@ public class HomeFragment extends Fragment {
                     startActivity(i);
                     getActivity().finish();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                } else {
+                }
+                else {
+                    Log.e("HomeFragment", "val "+id);
                     int mypoint = Integer.parseInt(AppController.getInstance().getCoins());
                     int fee = Integer.parseInt(total + "");
                     if (mypoint >= fee) {
@@ -573,7 +603,10 @@ public class HomeFragment extends Fragment {
             startActivity(i);
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        } else {
+        } else if(id.equals("3") || id.equals("4")) {
+            Toast.makeText(getActivity(), "Coming Soon...", Toast.LENGTH_LONG).show();
+        }
+        else {
             AppController.getInstance().setCoins("10000");
             int mypoint = Integer.parseInt(AppController.getInstance().getCoins());
 //            int fee = Integer.parseInt(total + "");
@@ -600,60 +633,60 @@ public class HomeFragment extends Fragment {
             }
         }
     }
-    public void random() {
-        Dialog alertDialog = new Dialog(getActivity());
-        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        alertDialog.setContentView(R.layout.random_dialog);
-        ImageView image = alertDialog.findViewById(R.id.iv_itemMore_gameImage);
-        TextView next = alertDialog.findViewById(R.id.next);
-        TextView name = alertDialog.findViewById(R.id.name);
-        TextView play = alertDialog.findViewById(R.id.play);
-        TextView playing = alertDialog.findViewById(R.id.playing);
-        CardView details = alertDialog.findViewById(R.id.details);
-        ImageView load = alertDialog.findViewById(R.id.load);
-        Glide.with(getActivity()).load(R.drawable.loading).into(load);
-        final GameModel[] n = {null};
-        n[0] = getRandomItem(gameModelList);
-        name.setText(n[0].getName());
-        playing.setText(n[0].getPlaying()+" playing");
-        try {
-            Glide.with(getActivity()).load(n[0].getImage()).into(image);
-        } catch (Exception e) {
-            Log.e(ERROR, e.getMessage());
-        }
-        GameModel finalN = n[0];
-        play.setOnClickListener(view ->
-                join(finalN.getId(), finalN.getName(), finalN.getImage(), finalN.getUrl(), finalN.getRotation())
-        );
-        next.setOnClickListener(view -> {
-            load.setVisibility(View.VISIBLE);
-            details.setVisibility(View.GONE);
-            new Handler().postDelayed(() -> {
-                load.setVisibility(View.GONE);
-                details.setVisibility(View.VISIBLE);
-                n[0] = getRandomItem(gameModelList);
-                name.setText(n[0].getName());
-                playing.setText(n[0].getPlaying()+" playing");
-                try {
-                    Glide.with(getActivity()).load(n[0].getImage()).into(image);
-                } catch (Exception e) {
-                    Log.e(ERROR, e.getMessage());
-                }
-            }, 3000);
-        });
-        new Handler().postDelayed(() -> {
-            load.setVisibility(View.GONE);
-            details.setVisibility(View.VISIBLE);
-        }, 3000);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        alertDialog.show();
-    }
-
-    public <T> T getRandomItem(List<T> list) {
-        randoms = new Random();
-        int listSize = list.size();
-        int randomIndex = randoms.nextInt(listSize);
-        return list.get(randomIndex);
-    }
+//    public void random() {
+//        Dialog alertDialog = new Dialog(getActivity());
+//        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        alertDialog.setContentView(R.layout.random_dialog);
+//        ImageView image = alertDialog.findViewById(R.id.iv_itemMore_gameImage);
+//        TextView next = alertDialog.findViewById(R.id.next);
+//        TextView name = alertDialog.findViewById(R.id.name);
+//        TextView play = alertDialog.findViewById(R.id.play);
+//        TextView playing = alertDialog.findViewById(R.id.playing);
+//        CardView details = alertDialog.findViewById(R.id.details);
+//        ImageView load = alertDialog.findViewById(R.id.load);
+//        Glide.with(getActivity()).load(R.drawable.loading).into(load);
+//        final GameModel[] n = {null};
+//        n[0] = getRandomItem(gameModelList);
+//        name.setText(n[0].getName());
+//        playing.setText(n[0].getPlaying()+" playing");
+//        try {
+//            Glide.with(getActivity()).load(n[0].getImage()).into(image);
+//        } catch (Exception e) {
+//            Log.e(ERROR, e.getMessage());
+//        }
+//        GameModel finalN = n[0];
+//        play.setOnClickListener(view ->
+//                join(finalN.getId(), finalN.getName(), finalN.getImage(), finalN.getUrl(), finalN.getRotation())
+//        );
+//        next.setOnClickListener(view -> {
+//            load.setVisibility(View.VISIBLE);
+//            details.setVisibility(View.GONE);
+//            new Handler().postDelayed(() -> {
+//                load.setVisibility(View.GONE);
+//                details.setVisibility(View.VISIBLE);
+//                n[0] = getRandomItem(gameModelList);
+//                name.setText(n[0].getName());
+//                playing.setText(n[0].getPlaying()+" playing");
+//                try {
+//                    Glide.with(getActivity()).load(n[0].getImage()).into(image);
+//                } catch (Exception e) {
+//                    Log.e(ERROR, e.getMessage());
+//                }
+//            }, 3000);
+//        });
+//        new Handler().postDelayed(() -> {
+//            load.setVisibility(View.GONE);
+//            details.setVisibility(View.VISIBLE);
+//        }, 3000);
+//        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        alertDialog.show();
+//    }
+//
+//    public <T> T getRandomItem(List<T> list) {
+//        randoms = new Random();
+//        int listSize = list.size();
+//        int randomIndex = randoms.nextInt(listSize);
+//        return list.get(randomIndex);
+//    }
 
 }

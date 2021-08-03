@@ -85,7 +85,8 @@ public class chatActivity extends AppCompatActivity {
     private ImageView ivSwitchAudio;
 
     // ConstraintLayout
-    private ConstraintLayout cLSelectedGame, cLSelectedGameBackground;
+    private ConstraintLayout cLSelectedGame;
+    private ImageView cLSelectedGameBackground;
     private ConstraintLayout cLRequestedGame, cLRequestedGameBackground;
 
     // TextView
@@ -204,7 +205,7 @@ public class chatActivity extends AppCompatActivity {
         cLRequestedGame = findViewById(R.id.cL_chatActivity_requestedGame);
         cLRequestedGameBackground = findViewById(R.id.cL_chatActicity_requestedGameBackground);
         cLSelectedGame = findViewById(R.id.cL_chatActivity_selectGame);
-        cLSelectedGameBackground = findViewById(R.id.cL_chatActicity_selectedGameBackground);
+        cLSelectedGameBackground = findViewById(R.id.gameViewDark);
 
         //RecyclerView
         rvGames = findViewById(R.id.rv_chatActivity_games);
@@ -340,8 +341,10 @@ public class chatActivity extends AppCompatActivity {
                 tvSelctedGameName.setText(name);
 
                 switch (name){
-                    case "Sheep Fight": cLSelectedGameBackground.setBackground(getDrawable(R.drawable.sheep_fight_dark)); break;
-                    case "Bubble Shooter":    cLSelectedGameBackground.setBackground(getDrawable(R.drawable.bubble_shooter_dark)); break;
+                    case "Sheep Fight": cLSelectedGameBackground.setBackground(getDrawable(R.drawable.sheep_fight_home_logo)); break;
+                    case "Ludo": cLSelectedGameBackground.setBackground(getDrawable(R.drawable.wizard_hex_home_crop)); break;
+                    case "BULL FIGHT": cLSelectedGameBackground.setBackground(getDrawable(R.drawable.bull_fight_home_crop)); break;
+                    case "Bubble Shooter":    cLSelectedGameBackground.setBackground(getDrawable(R.drawable.bubble_shooter_home_crop)); break;
                     default:  cLSelectedGameBackground.setBackground(getDrawable(R.drawable.test_game)); break;
                 }
             }
@@ -430,8 +433,10 @@ public class chatActivity extends AppCompatActivity {
                     tvRequestedGameName.setText(gameRequest.getGameName());
 
                     switch (gameRequest.getGameName()){
-                        case "Sheep Fight": cLRequestedGameBackground.setBackground(getDrawable(R.drawable.sheep_fight_dark)); break;
-                        case "Bubble Shooter":    cLRequestedGameBackground.setBackground(getDrawable(R.drawable.bubble_shooter_dark)); break;
+                        case "Sheep Fight": cLSelectedGameBackground.setBackground(getDrawable(R.drawable.sheep_fight_home_logo)); break;
+                        case "Ludo": cLSelectedGameBackground.setBackground(getDrawable(R.drawable.wizard_hex_home_crop)); break;
+                        case "BULL FIGHT": cLSelectedGameBackground.setBackground(getDrawable(R.drawable.bull_fight_home_crop)); break;
+                        case "Bubble Shooter":    cLSelectedGameBackground.setBackground(getDrawable(R.drawable.bubble_shooter_home_crop)); break;
                         default:  cLRequestedGameBackground.setBackground(getDrawable(R.drawable.test_game)); break;
                     }
 
@@ -445,7 +450,6 @@ public class chatActivity extends AppCompatActivity {
                         rvGames.setVisibility(View.VISIBLE);
                         cLSelectedGame.setVisibility(View.GONE);
                         cLRequestedGame.setVisibility(View.GONE);
-
                         gameRequest.setStatus(1);
                         docRef.set(gameRequest);
                         docRef.delete();
@@ -576,6 +580,9 @@ public class chatActivity extends AppCompatActivity {
         String freindUrl = url+ "?playerusername=" + freindName + "&playeravatarurl="
                 + freindProfileImage + "&roomid=" + roomId + "&playerid=2";
 
+        myUrl = myUrl.replaceAll("\n", "");
+        freindUrl = freindUrl.replaceAll("\n", "");
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("GAMEREQUEST").document(freindId + "_" + myId);
         GameRequest gameRequest = new GameRequest( myId+freindId, gameName, freindId, freindUrl, rotation, myId, 0, roomId);
@@ -608,6 +615,7 @@ public class chatActivity extends AppCompatActivity {
 
         docRef.set(gameRequest);
 
+        String finalMyUrl = myUrl;
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@androidx.annotation.Nullable @org.jetbrains.annotations.Nullable DocumentSnapshot snapshot,
@@ -631,7 +639,7 @@ public class chatActivity extends AppCompatActivity {
                         cLSelectedGame.setVisibility(View.GONE);
                         cLRequestedGame.setVisibility(View.GONE);
                         deleteGameRequest(docRef);
-                        startGame(myUrl, rotation, roomId, "p1health");
+                        startGame(finalMyUrl, rotation, roomId, "p1health");
                     }else if(request.getStatus() == 3){
                         countDownTimer.cancel();
                         rvGames.setVisibility(View.VISIBLE);
@@ -646,6 +654,7 @@ public class chatActivity extends AppCompatActivity {
         });
     }
     private void startGame(String myUrl, String rotation, String roomId, String playerId){
+        handleSendMessage("Game Played", messageRoomId);
         Intent intent = new Intent(this, PlayGameRequestActivity.class);
         intent.putExtra("url", myUrl);
         intent.putExtra("rotation", rotation);
@@ -653,6 +662,9 @@ public class chatActivity extends AppCompatActivity {
         intent.putExtra("playerId", playerId);
         intent.putExtra("myId", myId);
         intent.putExtra("chatRoomId", messageRoomId);
+        intent.putExtra("friendURL", freindProfileImage);
+        intent.putExtra("friendName", freindName);
+        intent.putExtra("myName", myName);
         startActivity(intent);
     }
     private void deleteGameRequest(DocumentReference docRef){

@@ -39,9 +39,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.hako.dreamproject.utils.Constant.API;
 import static com.hako.dreamproject.utils.Constant.BASEURL;
@@ -59,6 +62,7 @@ public class RewardFragment extends Fragment {
     CheckAdapter checkAdapter;
     RecyclerView rvChecking;
     SwipeRefreshLayout swipetoRefresh;
+
     LinearLayout loading;
     LinearLayout noItem;
     NestedScrollView scrollView;
@@ -78,6 +82,7 @@ public class RewardFragment extends Fragment {
     TextView totalComplete;
     TextView points;
     LinearLayout pointsClick;
+    private int flag = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,7 +99,6 @@ public class RewardFragment extends Fragment {
         hfour = rootView.findViewById(R.id.hfour);
         hone = rootView.findViewById(R.id.hone);
         points = rootView.findViewById(R.id.points);
-        pointsClick = rootView.findViewById(R.id.pointsClick);
         hthree = rootView.findViewById(R.id.hthree);
         htwo = rootView.findViewById(R.id.htwo);
         totalComplete = rootView.findViewById(R.id.totalComplete);
@@ -122,6 +126,18 @@ public class RewardFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Timer timer = new Timer ();
+        TimerTask t = new TimerTask () {
+            @Override
+            public void run () {
+                // some code
+                flag = 1;
+            }
+        };
+        timer.schedule (t, 0l, 1000*60*60*24);
+
+        pointsClick = rootView.findViewById(R.id.pointsClick);
         pointsClick.setOnClickListener(view -> {
             if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
@@ -131,9 +147,15 @@ public class RewardFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        claim.setOnClickListener(view ->
-                goForDaily()
-        );
+        claim.setOnClickListener(view -> {
+            int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            if(flag==1) {
+                flag = 0;
+                goForDaily();
+            } else {
+                Toast.makeText(getContext(), "Claim Every 24 Hours!", Toast.LENGTH_SHORT).show();
+            }
+        });
         getPlayerData();
         mylay();
         playGame.setOnClickListener(view ->
@@ -322,10 +344,10 @@ public class RewardFragment extends Fragment {
                 try {
                     JSONObject obj = new JSONObject(s);
                     if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
-                        Toast.makeText(getContext(), obj.getString(MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), obj.getString(MESSAGE), Toast.LENGTH_SHORT).show();
                         getPlayerData();
                     } else {
-                        Toast.makeText(getContext(), obj.getString(MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), obj.getString(MESSAGE), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

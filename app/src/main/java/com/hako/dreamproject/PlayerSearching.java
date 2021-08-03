@@ -82,8 +82,6 @@ public class PlayerSearching extends AppCompatActivity {
     JSONObject json = new JSONObject();
     boolean loading = true;
     int t = 0;
-    TextView entry1;
-    TextView entry2;
     AlertDialog builder;
 
     // CountDownTimer
@@ -112,8 +110,6 @@ public class PlayerSearching extends AppCompatActivity {
                 JSONObject extra = new JSONObject(data);
                 gameId = extra.getString("id");
                 entryFee = extra.getString("entry_fee");
-                entry2.setText(entryFee);
-                entry1.setText(entryFee);
                 url = extra.getString("url");
                 icon = extra.getString(IMAGE);
                 rotation = extra.getString(ROTATION);
@@ -145,8 +141,6 @@ public class PlayerSearching extends AppCompatActivity {
         playerName = findViewById(R.id.player_name);
         timeLeft = findViewById(R.id.timeLeft);
         close = findViewById(R.id.close);
-        entry1 = findViewById(R.id.entry1);
-        entry2 = findViewById(R.id.entry2);
         close.setOnClickListener(v -> finish());
 
 
@@ -202,7 +196,7 @@ public class PlayerSearching extends AppCompatActivity {
                 params.put("id", gameId);
                 params.put("online", online);
                 params.put("played", played);
-                Log.e(Constant.TAG, params.toString());
+                Log.e(Constant.TAG, params.toString()+"  "+BASEURL);
                 return requestHandler.sendPostRequest(BASEURL, params);
             }
 
@@ -252,6 +246,7 @@ public class PlayerSearching extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 try {
+                    Log.e("gotit", "here - "+s);
                     JSONObject obj = new JSONObject(s);
                     Log.d(TAG_PLAYER_SEARCHING, " res: " + obj);
                     if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
@@ -354,6 +349,9 @@ public class PlayerSearching extends AppCompatActivity {
                         AppController.getInstance().setCoins(parse + "");
                         Intent intent;
                         intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra("playerName", playerNameData);
+                        intent.putExtra("myName", AppController.getInstance().getName());
+                        intent.putExtra("playerImg", playerPicData);
                         intent.putExtra(DATA, json.toString());
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

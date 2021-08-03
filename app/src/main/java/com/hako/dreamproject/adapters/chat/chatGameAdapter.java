@@ -78,10 +78,10 @@ public class chatGameAdapter extends RecyclerView.Adapter<chatGameAdapter.MyHold
             name.setText(game.getName());
 
             switch (game.getName()){
-                case "Sheep Fight": image.setBackground(context.getDrawable(R.drawable.sheep_fight)); break;
-                case "HEXA GONA":    image.setBackground(context.getDrawable(R.drawable.hexa_gona)); break;
-                case "BULL FIGHT":    image.setBackground(context.getDrawable(R.drawable.bull_fight)); break;
-                case "Bubble Shooter":    image.setBackground(context.getDrawable(R.drawable.bubble_shooter)); break;
+                case "Sheep Fight": image.setBackground(context.getDrawable(R.drawable.sheep_fight_home_logo)); break;
+                case "Ludo":    image.setBackground(context.getDrawable(R.drawable.wizard_hex_home_crop)); break;
+                case "BULL FIGHT":    image.setBackground(context.getDrawable(R.drawable.bull_fight_home_crop)); break;
+                case "Bubble Shooter":    image.setBackground(context.getDrawable(R.drawable.bubble_shooter_home_crop)); break;
                 default:  image.setBackground(context.getDrawable(R.drawable.test_game)); break;
             }
         }

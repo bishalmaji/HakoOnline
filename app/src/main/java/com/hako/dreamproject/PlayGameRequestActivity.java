@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,10 +14,13 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.ConsoleMessage;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,14 +51,17 @@ public class PlayGameRequestActivity extends AppCompatActivity {
 
     WebView webViewPlayGame;
 
+    // Buttom View
+    Button playButton;
+
     // ConstrintLayoput
     ConstraintLayout clStatus;
 
     // Imageview
-    ImageView ivUserProfile;
+    ImageView ivUserProfile, imageView, friendImageView, userImageView;
 
     // TextView
-    TextView tvStatus;
+    TextView tvStatus, player1, player2;
 
     // DocumentReference
     DatabaseReference databaseReference;
@@ -62,7 +70,9 @@ public class PlayGameRequestActivity extends AppCompatActivity {
     boolean check = false;
     boolean iWin = false;
 
-    String TAG = "playGameRequestActivity";
+    ConstraintLayout clPokerTable;
+
+    String TAG = "playGameRequestActivity", friendImage = "", friendName = "", myName = "";
 
 
     @Override
@@ -76,6 +86,9 @@ public class PlayGameRequestActivity extends AppCompatActivity {
         playerId = getIntent().getStringExtra("playerId");
         String myId = AppController.getInstance().getUser_unique_id();
         String chatRoomId = getIntent().getStringExtra("chatRoomId");
+        friendImage = getIntent().getStringExtra("friendURL");
+        myName = getIntent().getStringExtra("myName");
+        friendName = getIntent().getStringExtra("friendName");
 
         Log.d(TAG, "InPlayGameRequestActivity url: " + url);
         Log.d(TAG, "InPlayGameRequestActivity rotation: " + rotation);
@@ -96,6 +109,9 @@ public class PlayGameRequestActivity extends AppCompatActivity {
 
     }
     private void setViews(){
+        //ButtomView
+        playButton = findViewById(R.id.playButtom);
+
         // WebView
         webViewPlayGame = findViewById(R.id.webView_playGameActivity_playGame);
 
@@ -104,9 +120,16 @@ public class PlayGameRequestActivity extends AppCompatActivity {
 
         // ImageView
         ivUserProfile = findViewById(R.id.iv_playGameRequestActivity_profile);
+        imageView = findViewById(R.id.micView);
+        friendImageView = findViewById(R.id.friendProfileImage);
+        userImageView = findViewById(R.id.userProfileImage);
+
+        clPokerTable = findViewById(R.id.cl_mainActivity_pokerTable);
 
         // TextView
         tvStatus = findViewById(R.id.tv_playGameRequestActivity_status);
+        player1 = findViewById(R.id.player1);
+        player2 = findViewById(R.id.player2);
     }
     private void playGame(String url){
         try{
@@ -131,7 +154,56 @@ public class PlayGameRequestActivity extends AppCompatActivity {
         catch (Exception e){
             Log.e(TAG, "In Extras != null msg: " + e.getMessage());
         }
+
+        Glide.with(this).load(R.drawable.coin_gif).into(imageView);
+
+        Glide.with(this)
+                .load(AppController.getInstance().getProfile())
+                .placeholder(R.drawable.profile_holder)
+                .centerCrop()
+                .circleCrop()
+                .into(userImageView);
+
+        Glide.with(this)
+                .load(friendImage)
+                .placeholder(R.drawable.profile_holder)
+                .centerCrop()
+                .circleCrop()
+                .into(friendImageView);
+
+        player1.setText(myName);
+        player2.setText(friendName);
+
+        new Handler().postDelayed(() -> {
+            imageView.setVisibility(View.GONE);
+        }, 10000);
+
+        final int[] flag = {0};
+
+        new Handler().postDelayed(() ->
+        {
+            playButton.setVisibility(View.VISIBLE);
+        }, 5000);
+
+        playButton.setOnClickListener(v -> {
+            flag[0] = 1;
+            webViewPlayGame.setVisibility(View.VISIBLE);
+            clPokerTable.setVisibility(View.GONE);
+        });
+
+        new Handler().postDelayed(() -> {
+            if(flag[0] ==0) {
+                webViewPlayGame.setVisibility(View.VISIBLE);
+                clPokerTable.setVisibility(View.GONE);
+            }
+        }, 10000);
+
+//        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+//            Log.d("MainActivity","SDk version above android L so forcibaly enabling ThirdPartyCookies");
+//            CookieManager.getInstance().setAcceptThirdPartyCookies(webViewPlayGame,true);
+//        }
     }
+
     private void setListnerOnRealTimeDataBase(String roomId, String playerId, String myId, String chatRoomId){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("sheepfight").child("roomID :" + roomId).child(roomId);

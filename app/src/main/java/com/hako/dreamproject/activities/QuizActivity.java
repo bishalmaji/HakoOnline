@@ -1,13 +1,18 @@
 package com.hako.dreamproject.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -37,35 +42,43 @@ import okhttp3.Request;
 public class QuizActivity extends AppCompatActivity {
 
     // TextView
-    TextView tvAnsweredQuestion, tvTotalQuestion;
     TextView tvQuestion;
 
     // RadioGroup & RadioButton
     RadioGroup rgOptions;
-    RadioButton rbOption1, rbOption2, rbOption3, rbOption4, rbOption5;
+    RadioButton rbOption1, rbOption2, rbOption3, rbOption4;
 
     // ProgressBar
     LinearProgressIndicator pbQuestionProgress;
 
     // Button
-    Button btnNext;
+    TextView btnNext;
 
     // ConstraintLayout
     ConstraintLayout cLMainSection;
 
+    private int flag = 0;
+
     // CardView
     CardView cv1, cv2, cv3;
 
+
     // Live Data
     int totalLength = 0;
-    int progressPerQuestion;
     Boolean isAnswerd = true;
     ArrayList<QuizQuestion> questionList = new ArrayList<>();
     MutableLiveData<Boolean> isQuestions = new MutableLiveData<Boolean>();
     MutableLiveData<Integer> questionNumber = new MutableLiveData<>();
 
+
+    CountDownTimer countDown;
+
+    MediaPlayer soundPlayer;
+
     // TAG
     String TAG = "quizActivity";
+
+    private TextView mTextField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +89,11 @@ public class QuizActivity extends AppCompatActivity {
         isQuestions.setValue(false);
         questionNumber.setValue(0);
 
+        mTextField = findViewById(R.id.timer);
+
+
+        startTime();
+        playMusic();
         setViews();
         setShrinkEffect();
         setOnClickListeners();
@@ -83,10 +101,37 @@ public class QuizActivity extends AppCompatActivity {
         initiliseListner();
 
     }
+
+    private void startTime() {
+        countDown= new CountDownTimer(30000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                mTextField.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                //call nextQuestionMethod here
+            }
+        };
+        countDown.start();
+    }
+
+    private void playMusic() {
+        soundPlayer= MediaPlayer.create(getApplicationContext(), R.raw.your_bgm);
+        soundPlayer.start();
+
+
+        Handler musicStopHandler = new Handler();
+        Runnable musicStopRunable = (() ->  {
+            soundPlayer.stop();
+            flag = 1;
+        });
+
+        musicStopHandler.postDelayed(musicStopRunable, 30000);
+    }
+
     private void setViews(){
         // TextView
-        tvAnsweredQuestion = findViewById(R.id.tv_quizActivity_answeredQuestions);
-        tvTotalQuestion = findViewById(R.id.tv_quizActivity_totalQuestions);
         tvQuestion = findViewById(R.id.tv_quizActivity_question);
 
         // Button
@@ -98,18 +143,10 @@ public class QuizActivity extends AppCompatActivity {
         rbOption2 = findViewById(R.id.rb_quizActivity_option2);
         rbOption3 = findViewById(R.id.rb_quizActivity_option3);
         rbOption4 = findViewById(R.id.rb_quizActivity_option4);
-        rbOption5 = findViewById(R.id.rb_quizActivity_option5);
 
-        // ProgressBar
-        pbQuestionProgress = findViewById(R.id.pb_quizActivity_questionProgress);
 
         // ConstraintLayout
         cLMainSection = findViewById(R.id.cl_quizActivity_mainSection);
-
-        // CardViews
-        cv1 = findViewById(R.id.cv_quizActivity_cv1);
-        cv2 = findViewById(R.id.cv_quizActivity_cv2);
-        cv3 = findViewById(R.id.cv_quizActivity_cv3);
 
     }
     private void setShrinkEffect(){
@@ -123,11 +160,15 @@ public class QuizActivity extends AppCompatActivity {
     private void setOnClickListeners(){
         btnNext.setOnClickListener( view -> {
             if(isQuestions.getValue()){
+                startTime();
+                playMusic();
                 questionNumber.setValue(questionNumber.getValue() + 1);
             }
         });
         rbOption1.setOnClickListener( view -> {
             if(rbOption1.isChecked()){
+                countDown.cancel();
+                soundPlayer.stop();
                 QuizQuestion quizQuestion = questionList.get(questionNumber.getValue());
                 String questionId = quizQuestion.getQuestionId();
                 submitAnswer(1, questionId, quizQuestion.getOptions(), 0, rbOption1);
@@ -135,6 +176,8 @@ public class QuizActivity extends AppCompatActivity {
         });
         rbOption2.setOnClickListener( view -> {
             if(rbOption2.isChecked()){
+                countDown.cancel();
+                soundPlayer.stop();
                 QuizQuestion quizQuestion = questionList.get(questionNumber.getValue());
                 String questionId = quizQuestion.getQuestionId();
                 submitAnswer(2, questionId, quizQuestion.getOptions(), 1, rbOption2);
@@ -142,6 +185,8 @@ public class QuizActivity extends AppCompatActivity {
         });
         rbOption3.setOnClickListener( view -> {
             if(rbOption3.isChecked()){
+                countDown.cancel();
+                soundPlayer.stop();
                 QuizQuestion quizQuestion = questionList.get(questionNumber.getValue());
                 String questionId = quizQuestion.getQuestionId();
                 submitAnswer(3, questionId, quizQuestion.getOptions(), 2, rbOption3);
@@ -149,16 +194,11 @@ public class QuizActivity extends AppCompatActivity {
         });
         rbOption4.setOnClickListener( view -> {
             if(rbOption4.isChecked()){
+                countDown.cancel();
+                soundPlayer.stop();
                 QuizQuestion quizQuestion = questionList.get(questionNumber.getValue());
                 String questionId = quizQuestion.getQuestionId();
                 submitAnswer(4, questionId, quizQuestion.getOptions(), 3, rbOption4);
-            }
-        });
-        rbOption5.setOnClickListener( view -> {
-            if(rbOption5.isChecked()){
-                QuizQuestion quizQuestion = questionList.get(questionNumber.getValue());
-                String questionId = quizQuestion.getQuestionId();
-                submitAnswer(5, questionId, quizQuestion.getOptions(), 4, rbOption5);
             }
         });
     }
@@ -167,9 +207,9 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if(aBoolean){
-                    btnNext.setBackground(getDrawable(R.drawable.btn_next));
+//                    btnNext.setBackground(getDrawable(R.drawable.btn_next));
                 }else {
-                    btnNext.setBackground(getDrawable(R.drawable.btn_next_fadded));
+//                    btnNext.setBackground(getDrawable(R.drawable.btn_next_fadded));
                 }
             }
         });
@@ -181,10 +221,6 @@ public class QuizActivity extends AppCompatActivity {
                     if(currentQuestion == totalLength){
                         isQuestions.setValue(false);
                     }
-                    tvAnsweredQuestion.setText("Question " + String.valueOf(integer+1));
-
-                    int currentProgress = pbQuestionProgress.getProgress();
-                    pbQuestionProgress.setProgressCompat(currentProgress+progressPerQuestion, true);
 
                     QuizQuestion quizQuestion = questionList.get(integer);
                     ArrayList<QuizQuestion.Options> options = quizQuestion.getOptions();
@@ -195,11 +231,10 @@ public class QuizActivity extends AppCompatActivity {
                     QuizQuestion.Options options5 = options.get(4);
 
                     tvQuestion.setText(quizQuestion.getTitle());
-                    rbOption1.setText(options1.getOption());
-                    rbOption2.setText(options2.getOption());
-                    rbOption3.setText(options3.getOption());
-                    rbOption4.setText(options4.getOption());
-                    rbOption5.setText(options5.getOption());
+                    rbOption1.setText("A: "+options1.getOption());
+                    rbOption2.setText("B: "+options2.getOption());
+                    rbOption3.setText("C: "+options3.getOption());
+                    rbOption4.setText("D: "+options4.getOption());
 
                 }
             }
@@ -220,11 +255,11 @@ public class QuizActivity extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 try{
+                    Log.e("gotit ", "to "+s);
+
                     JSONObject obj = new JSONObject(s);
                     JSONArray questions = obj.getJSONArray("availableQuestionList");
-                    tvTotalQuestion.setText("/" + String.valueOf(questions.length()));
                     totalLength = questions.length();
-                    progressPerQuestion = 100/totalLength;
                     Log.d(TAG, " Questions: " + questions);
                     for(int i = 0; i< questions.length(); i++){
                         JSONObject jsonObject = questions.getJSONObject(i);
@@ -279,7 +314,9 @@ public class QuizActivity extends AppCompatActivity {
 
         int currentPosition = questionNumber.getValue() + 1;
         if(isAnswerd){
-            setAnswer(options, selected, rb);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setAnswer(options, selected, rb);
+            }
 
             class submitAnswer extends AsyncTask<Void, Void, String >{
 
@@ -314,10 +351,13 @@ public class QuizActivity extends AppCompatActivity {
             Toast.makeText(this, "All Questions are completed", Toast.LENGTH_SHORT).show();
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void setAnswer(ArrayList<QuizQuestion.Options> options, int selected, RadioButton rb){
         if(options.get(0).getAnswer().equals("1")){
             rbOption1.setBackground(getDrawable(R.drawable.radio_button_green));
-            rbOption1.setTextColor(getColor(R.color.white));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                rbOption1.setTextColor(getColor(R.color.white));
+            }
             rbOption1.setButtonTintList(this.getResources().getColorStateList(R.color.white));
         }else if(options.get(1).getAnswer().equals("1")){
             rbOption2.setBackground(getDrawable(R.drawable.radio_button_green));
@@ -331,10 +371,6 @@ public class QuizActivity extends AppCompatActivity {
             rbOption4.setBackground(getDrawable(R.drawable.radio_button_green));
             rbOption4.setTextColor(getColor(R.color.white));
             rbOption4.setButtonTintList(this.getResources().getColorStateList(R.color.white));
-        }else if(options.get(4).getAnswer().equals("1")){
-            rbOption5.setBackground(getDrawable(R.drawable.radio_button_green));
-            rbOption5.setTextColor(getColor(R.color.white));
-            rbOption5.setButtonTintList(this.getResources().getColorStateList(R.color.white));
         }
 
         QuizQuestion.Options selectedOption = options.get(selected);
@@ -350,4 +386,9 @@ public class QuizActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        soundPlayer.stop();
+        super.onBackPressed();
+    }
 }

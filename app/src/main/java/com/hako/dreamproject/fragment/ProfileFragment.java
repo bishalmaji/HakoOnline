@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.hako.dreamproject.BrowserActivity;
 import com.hako.dreamproject.LoginActivity;
+import com.hako.dreamproject.PlayWithFriends;
 import com.hako.dreamproject.R;
 import com.hako.dreamproject.chatActivity;
 import com.hako.dreamproject.dialog.showInviteDialog;
@@ -67,7 +68,6 @@ public class ProfileFragment extends Fragment {
     TextView tvMyId;
     TextView totalPlayed;
     TextView todayPlayed;
-    TextView refercode;
 
     // LinearLayout
     LinearLayout lL_inviteFreind;
@@ -103,7 +103,6 @@ public class ProfileFragment extends Fragment {
         tvMyId = rootView.findViewById(R.id.tv_profileFrag_myId);
         totalPlayed = rootView.findViewById(R.id.totalPlayed);
         todayPlayed = rootView.findViewById(R.id.today);
-        refercode = rootView.findViewById(R.id.refer);
 
         // ImageView
         profile = rootView.findViewById(R.id.profile);
@@ -119,23 +118,15 @@ public class ProfileFragment extends Fragment {
     }
     private void setOnClickAnimation(){
         ClickShrinkEffectKt.applyClickShrink(lL_inviteFreind);
-        ClickShrinkEffectKt.applyClickShrink(refercode);
     }
     private void setOnClickListeners(){
         lL_inviteFreind.setOnClickListener(view -> {
             if(UsableFunctions.checkLoggedInOrNot()){
-                Log.d(TAG_INVITE_FRIEND, "myId: " + AppController.getInstance().getId());
-                showPoPForInviteFriends();
+                startActivity(new Intent(getContext(), PlayWithFriends.class));
             }else{
                 Toast.makeText(requireContext(), "Please Login First", Toast.LENGTH_SHORT).show();
                 gotoLoginActivity();
             }
-        });
-        refercode.setOnClickListener(view -> {
-            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("label", AppController.getInstance().getRefer());
-            clipboard.setPrimaryClip(clip);
-            Toast.makeText(getActivity(),"Code Copy :"+AppController.getInstance().getRefer(),Toast.LENGTH_LONG).show();
         });
         agreements.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), BrowserActivity.class);
@@ -160,7 +151,7 @@ public class ProfileFragment extends Fragment {
     // ClickFunctions
     private void showPoPForInviteFriends(){
         showInviteDialog inviteDialog = new showInviteDialog();
-        Dialog dialog = inviteDialog.showDialog(new Dialog(requireContext()), requireContext());
+        Dialog dialog = inviteDialog.showDialog(new Dialog(requireActivity()), requireActivity());
         EditText etInviteId = dialog.findViewById(R.id.et_inviteDialog_playerId);
         dialog.findViewById(R.id.btn_inviteDialog_invite).setOnClickListener( view -> {
             String friendId = etInviteId.getText().toString().trim();
@@ -293,7 +284,6 @@ public class ProfileFragment extends Fragment {
                     if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
                         totalPlayed.setText(obj.getString("total"));
                         todayPlayed.setText(obj.getString("today"));
-                        refercode.setText(AppController.getInstance().getRefer());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

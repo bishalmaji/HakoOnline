@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         Glide.with(this).load(R.drawable.packman).into(packman);
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken("42809996726-2aabef2tr5bibsr2rkr0ri0h3j7cdnkp.apps.googleusercontent.com")
                 .requestIdToken(getString(R.string.default_web_client_id))
 //                .requestIdToken("735929854041-kig5f76te5rhaab3q9qe1m6h4m2vf7vt.apps.googleusercontent.com")
                 .requestEmail()

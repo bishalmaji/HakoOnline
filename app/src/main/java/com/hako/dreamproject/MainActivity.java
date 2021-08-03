@@ -1,5 +1,6 @@
 package com.hako.dreamproject;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -13,10 +14,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -90,19 +93,36 @@ public class MainActivity extends AppCompatActivity {
 
     JSONObject chatObject = new JSONObject();
 
+    ImageView userImageView, friendImageView;
+
+    ImageView imageView;
+
+    TextView player1, player2;
+
+    String playerName, playerImg, myName;
+
     @SuppressLint({"ObsoleteSdkInt", "SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
         setContentView(R.layout.activity_main);
 
-        webView = findViewById(R.id.webview);
+        webView = findViewById(R.id.webView_playGameActivity_playGame);
+        playerName = getIntent().getStringExtra("playerName");
+        playerImg = getIntent().getStringExtra("playerImg");
+        myName = getIntent().getStringExtra("myName");
+
+        userImageView = findViewById(R.id.userProfileImage);
         clPokerTable = findViewById(R.id.cl_mainActivity_pokerTable);
+        imageView = findViewById(R.id.micView);
+        friendImageView = findViewById(R.id.friendProfileImage);
+        player1 = findViewById(R.id.player1);
+        player2 = findViewById(R.id.player2);
 
 
         Bundle extras = getIntent().getExtras();
@@ -137,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 WebView.setWebContentsDebuggingEnabled(true);
             }
-
             try{
                 webView.getSettings().setAppCacheMaxSize(5 * 1024 * 1024); // 5MB
                 webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
@@ -155,10 +174,58 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG_MAIN_ACTIVITY, "In Extras != null msg: " + e.getMessage());
             }
         }
-        new Handler().postDelayed(() -> {
 
-            webView.setVisibility(View.VISIBLE);
-            clPokerTable.setVisibility(View.GONE);
+        Glide.with(this).load(R.drawable.coin_gif).into(imageView);
+
+        Glide.with(this)
+                .load(AppController.getInstance().getProfile())
+                .placeholder(R.drawable.profile_holder)
+                .centerCrop()
+                .circleCrop()
+                .into(userImageView);
+
+        Glide.with(this)
+                .load(playerImg)
+                .placeholder(R.drawable.profile_holder)
+                .centerCrop()
+                .circleCrop()
+                .into(friendImageView);
+
+        player1.setText(myName);
+        player2.setText(playerName);
+
+        final int[] flag = {0};
+
+        new Handler().postDelayed(() -> {
+            imageView.setVisibility(View.GONE);
+        }, 4500);
+
+        ImageView playButton = findViewById(R.id.micView);
+
+        new Handler().postDelayed(() -> {
+            playButton.setVisibility(View.VISIBLE);
+        }, 5000);
+
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flag[0] = 1;
+                webView.setVisibility(View.VISIBLE);
+                clPokerTable.setVisibility(View.GONE);
+            }
+        });
+
+//        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+//            Log.d("MainActivity","SDk version above android L so forcibaly enabling ThirdPartyCookies");
+//            CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
+//        }
+
+        new Handler().postDelayed(() -> {
+            if(flag[0] ==0) {
+                webView.setVisibility(View.VISIBLE);
+                clPokerTable.setVisibility(View.GONE);
+            }
+        }, 10000);
 
             databaseReference.child(secondUserid)
                     .addValueEventListener(new ValueEventListener() {
@@ -181,7 +248,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.e(TAG_MAIN_ACTIVITY, "In Databse onCanclled Failed to read value.", error.toException());
                 }
             });
-        }, 5000);
 
         /////// GET SECOND USER /////////////////////////////
 

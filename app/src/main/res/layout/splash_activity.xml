@@ -5,26 +5,27 @@
     android:gravity="center"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ImageView
-        android:id="@+id/extra_points"
-        android:layout_width="323dp"
-        android:layout_height="217dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="150dp"
-        android:src="@drawable/splash_screen_background"
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:src="@drawable/splash_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="112dp"
-        android:layout_height="42dp"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/splash_screen_name"
+        android:id="@+id/finalGif"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="190dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

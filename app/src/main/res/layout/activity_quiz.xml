@@ -5,7 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.QuizActivity"
-    android:background="@drawable/searching_background">
+    android:background="@color/black">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/kbc_bg"
+        android:alpha="0.7"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/kbc_bg"
+        android:scaleType="centerCrop"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +34,7 @@
             android:layout_height="20dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:src="@drawable/left_arrow"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,7 +43,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/open_sans_bold"
             android:text="Play Quiz And Win Exiting Prizes"
-            android:textColor="@color/primaryText"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dimen_18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView13"
             app:layout_constraintStart_toEndOf="@+id/imageView9"
@@ -45,217 +58,185 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/lead_board" />
+            app:srcCompat="@drawable/ic_baseline_leaderboard_24"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout11">
-
-        <TextView
-            android:id="@+id/tv_quizActivity_answeredQuestions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/open_sans_bold"
-            android:text="Question 7"
-            android:textColor="@color/primaryText"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/tv_quizActivity_totalQuestions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/open_sans_bold"
-            android:text="/10"
-            android:textColor="@color/primaryTextLight"
-            android:textSize="24sp" />
-    </LinearLayout>
-
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/pb_quizActivity_questionProgress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:progress="0"
-        app:indicatorColor="@color/yellow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:trackColor="#68F8C52C"
-        app:trackCornerRadius="@dimen/dimen_10dp"
-        app:trackThickness="@dimen/dimen_20dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_quizActivity_mainSection"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_quizActivity_next"
+        app:layout_constraintBottom_toTopOf="@+id/ll11"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pb_quizActivity_questionProgress">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout11">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_quizActivity_cv3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:backgroundTint="#56FFFFFF"
-            app:cardCornerRadius="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/tv_quizActivity_question"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="horizontal">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_quizActivity_cv2"
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/timer_icon"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30"
+                android:textColor="@color/white"
+                android:textSize="30dp"
+                android:layout_marginLeft="5dp"
+                android:fontFamily="@font/nunito_sb"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_quizActivity_question"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#8BFFFFFF"
-            app:cardCornerRadius="20dp"
+            android:layout_height="100dp"
+            android:background="@drawable/quiz_radio_bg"
+            android:fontFamily="@font/open_sans_extra_bold"
+            android:gravity="center"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:text="Which fruit fell on Newton's head from the tree?"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dimen_20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="50dp"/>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_quizActivity_cv1"
+        <RadioGroup
+            android:id="@+id/rg_quizActivity_options"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="32dp"
-            android:backgroundTint="@color/white"
-            app:cardCornerRadius="20dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/tv_quizActivity_question">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout14"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="32dp">
+                android:orientation="vertical">
 
-                text
-
-                <TextView
-                    android:id="@+id/tv_quizActivity_question"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:fontFamily="@font/open_sans_extra_bold"
-                    android:text="***************************************************"
-                    android:textColor="@color/primaryText"
-                    android:textSize="24sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <RadioGroup
-                    android:id="@+id/rg_quizActivity_options"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="32dp"
-                    android:layout_marginBottom="32dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_quizActivity_question">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <RadioButton
                         android:id="@+id/rb_quizActivity_option1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/quiz_radio_bg"
+                        android:button="@null"
                         android:fontFamily="@font/open_sans_bold"
                         android:layoutDirection="rtl"
-                        android:paddingLeft="15dp"
-                        android:text="Moroslav Kolse"
-                        android:textSize="16sp" />
+                        android:padding="10dp"
+                        android:text="Apple"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/rb_quizActivity_option2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/quiz_radio_bg"
+                        android:button="@null"
                         android:fontFamily="@font/open_sans_bold"
                         android:layoutDirection="rtl"
-                        android:paddingLeft="15dp"
-                        android:text="**********"
-                        android:textSize="16sp" />
+                        android:padding="10dp"
+                        android:text="Orange"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top"
+                    android:layout_marginTop="40dp"
+                    android:layout_weight="0.5"
+                    android:gravity="top"
+                    android:orientation="horizontal">
 
                     <RadioButton
                         android:id="@+id/rb_quizActivity_option3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/quiz_radio_bg"
+                        android:button="@null"
                         android:fontFamily="@font/open_sans_bold"
                         android:layoutDirection="rtl"
-                        android:paddingLeft="15dp"
-                        android:textSize="16sp" />
+                        android:padding="10dp"
+                        android:text="Mango"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/rb_quizActivity_option4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/quiz_radio_bg"
+                        android:button="@null"
                         android:fontFamily="@font/open_sans_bold"
                         android:layoutDirection="rtl"
-                        android:paddingLeft="15dp"
-                        android:textSize="16sp" />
+                        android:padding="10dp"
+                        android:text="Pineapple"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
 
-                    <RadioButton
-                        android:id="@+id/rb_quizActivity_option5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="@font/open_sans_bold"
-                        android:layoutDirection="rtl"
-                        android:paddingLeft="15dp"
-                        android:textSize="16sp" />
-                </RadioGroup>
+                </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+        </RadioGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_quizActivity_next"
+    <LinearLayout
+        android:id="@+id/ll11"
         android:layout_width="140dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/btn_next"
-        android:fontFamily="@font/open_sans_bold"
-        android:gravity="center"
-        android:text="NEXT"
-        android:textColor="@color/white"
-        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/quiz_bg"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/btn_quizActivity_next"
+            android:layout_width="140dp"
+            android:layout_height="50dp"
+            android:fontFamily="@font/open_sans_bold"
+            android:gravity="center"
+            android:text="NEXT"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:background="@drawable/quiz_bg"/>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
