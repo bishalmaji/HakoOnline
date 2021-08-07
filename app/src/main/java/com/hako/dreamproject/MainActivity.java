@@ -165,8 +165,8 @@ public class MainActivity extends AppCompatActivity {
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
                 webView.loadUrl(currrentPageUrl);
-                ChromeClient webViewClient = new ChromeClient(this);
-                webView.setWebChromeClient(webViewClient);
+                //ChromeClient webViewClient = new ChromeClient(this);
+               // webView.setWebChromeClient(webViewClient);
                 WebViewClientImpl webViewClients = new WebViewClientImpl(this);
                 webView.setWebViewClient(webViewClients);
             }
@@ -196,15 +196,15 @@ public class MainActivity extends AppCompatActivity {
 
         final int[] flag = {0};
 
-        new Handler().postDelayed(() -> {
+     /*   new Handler().postDelayed(() -> {
             imageView.setVisibility(View.GONE);
-        }, 4500);
+        }, 4500);*/
 
         ImageView playButton = findViewById(R.id.micView);
 
-        new Handler().postDelayed(() -> {
+      /*  new Handler().postDelayed(() -> {
             playButton.setVisibility(View.VISIBLE);
-        }, 5000);
+        }, 5000);*/
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,12 +220,12 @@ public class MainActivity extends AppCompatActivity {
 //            CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
 //        }
 
-        new Handler().postDelayed(() -> {
+     /*   new Handler().postDelayed(() -> {
             if(flag[0] ==0) {
                 webView.setVisibility(View.VISIBLE);
                 clPokerTable.setVisibility(View.GONE);
             }
-        }, 10000);
+        }, 1000);*/
 
             databaseReference.child(secondUserid)
                     .addValueEventListener(new ValueEventListener() {

@@ -1,42 +1,103 @@
 {
   "project_info": {
-    "project_number": "42809996726",
-    "firebase_url": "https://bubbleshooter-4f514-default-rtdb.firebaseio.com",
-    "project_id": "bubbleshooter-4f514",
-    "storage_bucket": "bubbleshooter-4f514.appspot.com"
+    "project_number": "518654146741",
+    "firebase_url": "https://bubbleshooter-99493-default-rtdb.firebaseio.com",
+    "project_id": "bubbleshooter-99493",
+    "storage_bucket": "bubbleshooter-99493.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:42809996726:android:5233dfd4113dcd234c3d17",
+        "mobilesdk_app_id": "1:518654146741:android:ff3ab4758d10712cf966fc",
         "android_client_info": {
-          "package_name": "com.hako.dreamproject"
+          "package_name": "com.gam.hako"
         }
       },
       "oauth_client": [
         {
-          "client_id": "42809996726-2aabef2tr5bibsr2rkr0ri0h3j7cdnkp.apps.googleusercontent.com",
+          "client_id": "518654146741-2tl3brlu4itfhpiae52724jkuffvb420.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.hako.dreamproject",
+            "package_name": "com.gam.hako",
             "certificate_hash": "185634f667ce0b74ea265e5b9d8d9448e739c7b8"
           }
         },
         {
-          "client_id": "42809996726-i9pgu4u2j54m8scj7v2i08m0ui5jd9rr.apps.googleusercontent.com",
+          "client_id": "518654146741-spcq9un24t9q1aq42fjqb0ogi9ph539p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gam.hako",
+            "certificate_hash": "0da6d78d09265e45ac5b3af38ac65cfeb62753ef"
+          }
+        },
+        {
+          "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBDrB0bksPHQF-UjNsVhjG3juKLfoT2fQ0"
+          "current_key": "AIzaSyBzyMoG1xYewRUZAIPaNw55SszUiOGUdUg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "42809996726-i9pgu4u2j54m8scj7v2i08m0ui5jd9rr.apps.googleusercontent.com",
+              "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518654146741:android:acfe14f452d93ea8f966fc",
+        "android_client_info": {
+          "package_name": "com.hako.dreamproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "518654146741-2ei0blkifh9cqacqktf1o0l7i90mor8u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hako.dreamproject",
+            "certificate_hash": "37a70dd202463dc45913828c4eea5818d04cb23b"
+          }
+        },
+        {
+          "client_id": "518654146741-7m96unmicqpg41flgurr898vnfrinlec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hako.dreamproject",
+            "certificate_hash": "0da6d78d09265e45ac5b3af38ac65cfeb62753ef"
+          }
+        },
+        {
+          "client_id": "518654146741-ls7ljajl7op5qiitliqme001l7tvhbfm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hako.dreamproject",
+            "certificate_hash": "ceda3aee41f2d4f0ec8cfada552a5bca04567047"
+          }
+        },
+        {
+          "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzyMoG1xYewRUZAIPaNw55SszUiOGUdUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
