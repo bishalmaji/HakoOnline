@@ -91,7 +91,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void getChatRoomsFromFirebase(String myId) {
-        Query query = db.collection("USERS").document(myId).collection("chatRooms").whereEqualTo("play","n").orderBy("chatRoomId", Query.Direction.ASCENDING);
+        Query query = db.collection("USERS").document(myId).collection("chatRooms").orderBy("chatRoomId", Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<chatRoom> options=new FirestoreRecyclerOptions.Builder<chatRoom>()
                 .setQuery(query,chatRoom.class).build();
          adapter= new FirestoreRecyclerAdapter<chatRoom, ChatViewHolder>(options) {

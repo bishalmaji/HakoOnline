@@ -93,7 +93,7 @@ public class RecentFragment extends Fragment {
     private void getChatRoomsFromFirebase(String myId) {
         Query query = db.collection("USERS").document(myId)
                 .collection("chatRooms")
-                .whereEqualTo("play","y").orderBy("chatRoomId", Query.Direction.ASCENDING);
+                .orderBy("chatRoomId", Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<chatRoom> options=new FirestoreRecyclerOptions.Builder<chatRoom>()
                 .setQuery(query,chatRoom.class).build();
         adapter= new FirestoreRecyclerAdapter<chatRoom, RecentChatHolder>(options) {
