@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "518654146741-fl76hudq41en08pfup7djnhc6pb290ae.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gam.hako",
+            "certificate_hash": "8296bd2b12d0dbff77da6d81f9a1235cd789702b"
+          }
+        },
+        {
+          "client_id": "518654146741-kpfo39d8r1ujeamslf6f5eiaofgsstfh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gam.hako",
+            "certificate_hash": "a212b335bde5b06f7cf4f7d2f62c607cdbfb0d13"
+          }
+        },
+        {
           "client_id": "518654146741-spcq9un24t9q1aq42fjqb0ogi9ph539p.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -76,11 +92,35 @@
           }
         },
         {
+          "client_id": "518654146741-9l7mou6ai9kkeghuu9g1r2ssu9cm9l8k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hako.dreamproject",
+            "certificate_hash": "988c3b6f453df847fa6c576b5ab4d7e7193daa7e"
+          }
+        },
+        {
+          "client_id": "518654146741-dvvruoeuid8oajtqkt29f1hk58agln5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hako.dreamproject",
+            "certificate_hash": "8296bd2b12d0dbff77da6d81f9a1235cd789702b"
+          }
+        },
+        {
           "client_id": "518654146741-ls7ljajl7op5qiitliqme001l7tvhbfm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.hako.dreamproject",
             "certificate_hash": "ceda3aee41f2d4f0ec8cfada552a5bca04567047"
+          }
+        },
+        {
+          "client_id": "518654146741-nilh42v0b3vn6s0ha2q5i1j4g4273ah6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hako.dreamproject",
+            "certificate_hash": "a212b335bde5b06f7cf4f7d2f62c607cdbfb0d13"
           }
         },
         {

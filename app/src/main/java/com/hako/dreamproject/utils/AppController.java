@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.airbnb.lottie.L;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.hako.dreamproject.R;
 import com.onesignal.OneSignal;
 
@@ -135,8 +137,11 @@ public class AppController extends Application {
     }
 
     public String getProfile() {
+       // return "https://lh3.googleusercontent.com/a-/AOh14GiJRRg9AX8d3uPlQGPZlCfkDY68mU7CH2LuEcQzJw=s96-c";
+
         return this.profile;
     }
+
     public void setProfile(String profile) {
 
         this.profile = profile;
@@ -193,6 +198,7 @@ public class AppController extends Application {
     }
 
     public Boolean login(String authObj) {
+        Log.e("LOGIN HONE BAAD","LOG IN CALLED");
         try {
             JSONObject js = new JSONObject(authObj);
 

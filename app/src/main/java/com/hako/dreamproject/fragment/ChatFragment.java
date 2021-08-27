@@ -14,7 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -28,13 +34,14 @@ import com.hako.dreamproject.chatActivity;
 import com.hako.dreamproject.model.chatRoom;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.UsableFunctions;
+import com.hardik.clickshrinkeffect.ClickShrinkEffectKt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 
-public class ChatFragment extends Fragment{
+public class ChatFragment extends Fragment {
 
     // Root View
     private View root;
@@ -42,14 +49,12 @@ public class ChatFragment extends Fragment{
     // RecyclerView
     private RecyclerView rvGroupChats;
 
-    GroupChatAdapter adapter;
-
     // Firebase
     FirebaseFirestore db;
-
+    ImageView empty_chat_imgs;
     // String
     String TAG_CHAT_FRAGMENT = "chatFragment";
-
+    FirestoreRecyclerAdapter<chatRoom,ChatViewHolder> adapter;
     public ChatFragment() {
         // Required empty public constructor
     }
@@ -61,72 +66,90 @@ public class ChatFragment extends Fragment{
         root = inflater.inflate(R.layout.fragment_chat, container, false);
 
         initViews();
-        if(UsableFunctions.checkLoggedInOrNot()){
-            try{
+        if (UsableFunctions.checkLoggedInOrNot()) {
+            try {
                 getChatRoomsFromFirebase(AppController.getInstance().getUser_unique_id());
-            }catch (Exception e){
+            } catch (Exception e) {
                 getChatRoomsFromFirebase("56341");
             }
         }
-
+        Log.d("lifecheck", "onCreateView: chatfragment ");
         return root;
     }
 
-    private void initViews(){
-        //firebase
+    private void initViews() {
         db = FirebaseFirestore.getInstance();
-
-        // RecyclerView
+        empty_chat_imgs = root.findViewById(R.id.empty_chat_img);
         rvGroupChats = root.findViewById(R.id.rv_chat_groupChat);
+        try {
+            Glide.with(this).load(R.drawable.message_screen).into(empty_chat_imgs);
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
-    private void getChatRoomsFromFirebase(String myId){
 
-        Log.d(TAG_CHAT_FRAGMENT, "myId: " + myId);
-        CollectionReference colRef = db.collection("USERS").document(myId)
-                .collection("chatRooms");
+    private void getChatRoomsFromFirebase(String myId) {
+        Query query = db.collection("USERS").document(myId)
+                .collection("chatRooms")
+                .orderBy("chatRoomId", Query.Direction.ASCENDING);
+        FirestoreRecyclerOptions<chatRoom> options=new FirestoreRecyclerOptions.Builder<chatRoom>()
+                .setQuery(query,chatRoom.class).build();
+         adapter= new FirestoreRecyclerAdapter<chatRoom, ChatViewHolder>(options) {
+            @NonNull
+            @Override
+            public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View holder = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_card, parent, false);
+                return new ChatViewHolder(holder);
+            }
 
-        colRef.orderBy("chatRoomId", Query.Direction.ASCENDING)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            ArrayList<chatRoom> chatRooms = new ArrayList<>();
-                            for(QueryDocumentSnapshot document: task.getResult()){
-                                try{
-                                    chatRooms.add(document.toObject(chatRoom.class));
-                                }catch (Exception e){
-                                    Log.e(TAG_CHAT_FRAGMENT, "95 Exception: " + e.getMessage());
-                                }
-                            }
-                            setUpRecyclerView(chatRooms);
-                        }
-                    }
-                });
-    }
-    private void setUpRecyclerView(ArrayList<chatRoom> chatRooms){
-
-        Activity activity = getActivity();
-        if(activity!=null && isAdded() && chatRooms.size()>0) {
-            adapter = new GroupChatAdapter(requireActivity(), chatRooms, new GroupChatAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(chatRoom chatRoom) {
+            @Override
+            protected void onBindViewHolder(@NonNull ChatViewHolder holder, int position, @NonNull chatRoom model) {
+                Glide.with(getContext()).load(model.getFriendProfile()).circleCrop().into(holder.ivGroupChatImage);
+                holder.tvChatTitle.setText(model.getFriendName());
+                holder.itemView.setOnClickListener( view -> {
                     Intent intent = new Intent(getActivity(), chatActivity.class);
-                    intent.putExtra("chatRoomId", chatRoom.getChatRoomId());
-                    intent.putExtra("myScore", chatRoom.getMyScore());
-                    intent.putExtra("freindScore", chatRoom.getFriendScore());
-                    intent.putExtra("freindProfile", chatRoom.getFriendProfile());
-                    intent.putExtra("freindName", chatRoom.getFriendName());
-                    intent.putExtra("reciverId", chatRoom.getFriendId());
+                    intent.putExtra("chatRoomId", model.getChatRoomId());
+                    intent.putExtra("myScore", model.getMyScore());
+                    intent.putExtra("freindScore", model.getFriendScore());
+                    intent.putExtra("freindProfile", model.getFriendProfile());
+                    intent.putExtra("freindName", model.getFriendName());
+                    intent.putExtra("reciverId", model.getFriendId());
+                    intent.putExtra("firstMsg",model.isFirstMsg());
                     startActivity(intent);
-                }
-            });
+                });
+                ClickShrinkEffectKt.applyClickShrink(holder.itemView);
+            }
+        };
+         setUpRecyclerView();
+    }
 
+    private void setUpRecyclerView() {
             rvGroupChats.setAdapter(new AlphaInAnimationAdapter(adapter));
+            adapter.startListening();
             rvGroupChats.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
             rvGroupChats.setHasFixedSize(true);
-            rvGroupChats.setItemAnimator(new DefaultItemAnimator());
+            rvGroupChats.setItemAnimator(null);
+
         }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        adapter.stopListening();
     }
+
+    class ChatViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivGroupChatImage,ivStatus;
+        TextView tvChatTitle;
+
+        public ChatViewHolder(@NonNull View itemView) {
+            super(itemView);
+            ivGroupChatImage = itemView.findViewById(R.id.iv_charCard_groupChatImage);
+            tvChatTitle = itemView.findViewById(R.id.tv_chatCard_chatTitle);
+            ivStatus=itemView.findViewById(R.id.iv_stat);
+        }
+}
+
 
 }

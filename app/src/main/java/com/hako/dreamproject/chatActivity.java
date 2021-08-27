@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
@@ -126,7 +127,7 @@ public class chatActivity extends AppCompatActivity {
     // Message data
     String messageRoomId;
     String myId, myProfileImage, myName;
-    int myScore, friendScore;
+    String  myScore, friendScore;
     String reciverId, freindProfileImage, freindName;
 
     //Count
@@ -142,11 +143,12 @@ public class chatActivity extends AppCompatActivity {
 
         // get from previous activity
         messageRoomId = getIntent().getStringExtra("chatRoomId");
-        myScore = getIntent().getIntExtra("myScore", 0);
+        myScore =  getIntent().getStringExtra("myScore");
         reciverId = getIntent().getStringExtra("reciverId");
         freindProfileImage = getIntent().getStringExtra("freindProfile");
         freindName = getIntent().getStringExtra("freindName");
-        friendScore = getIntent().getIntExtra("freindScore", 0);
+        friendScore = getIntent().getStringExtra("freindScore");
+
 
 
         myId = AppController.getInstance().getUser_unique_id();
@@ -261,8 +263,8 @@ public class chatActivity extends AppCompatActivity {
         Glide.with(this).load(freindProfileImage).circleCrop().placeholder(getDrawable(R.drawable.profile_holder)).into(ivFreindProfile);
         tvMyName.setText(myName);
         tvFreindName.setText(freindName);
-        tvMyScore.setText(String.valueOf(myScore));
-        tvFreindScore.setText(String.valueOf(friendScore));
+        tvMyScore.setText(myScore);
+        tvFreindScore.setText(friendScore);
     }
     public void getGamesData() {
         class Bnner extends AsyncTask<Void, Void, String> {
@@ -505,8 +507,10 @@ public class chatActivity extends AppCompatActivity {
             ivFollowPlayer.setBackground(this.getDrawable(R.drawable.follow_player));
         }
     }
-    // Handle Send Message
+
+    // age
     private void handleSendMessage(String message, String msgRoomId){
+
         if(!message.isEmpty() && message != ""){
             String msgId = UsableFunctions.getMessageId();
             Message messageObj = new Message(message, msgId, reciverId, myId);

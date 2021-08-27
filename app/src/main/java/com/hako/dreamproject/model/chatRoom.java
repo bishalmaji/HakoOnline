@@ -2,36 +2,39 @@ package com.hako.dreamproject.model;
 
 public class chatRoom {
     private String chatRoomId;
-    private int myScore;
+    private String  myScore;
     private String friendId;
     private String friendName;
-    private int friendScore;
+    private String  friendScore;
     private String friendProfile;
+    private String play;
 
     public chatRoom(){ }
 
-    public chatRoom(String chatRoomId, int myScore, String friendId, String friendName, int friendScore, String friendProfile) {
+    public chatRoom(String chatRoomId, String  myScore, String friendId, String friendName, String  friendScore, String friendProfile, String  play) {
         this.chatRoomId = chatRoomId;
         this.myScore = myScore;
         this.friendId = friendId;
         this.friendName = friendName;
         this.friendScore = friendScore;
         this.friendProfile = friendProfile;
+
+        this.play = play;
     }
 
-    public int getMyScore() {
+    public String getMyScore() {
         return myScore;
     }
 
-    public void setMyScore(int myScore) {
+    public void setMyScore(String myScore) {
         this.myScore = myScore;
     }
 
-    public int getFriendScore() {
+    public String getFriendScore() {
         return friendScore;
     }
 
-    public void setFriendScore(int friendScore) {
+    public void setFriendScore(String  friendScore) {
         this.friendScore = friendScore;
     }
 
@@ -65,5 +68,13 @@ public class chatRoom {
 
     public void setFriendName(String friendName) {
         this.friendName = friendName;
+    }
+
+    public String  isFirstMsg() {
+        return play;
+    }
+
+    public void setFirstMsg(String  firstMsg) {
+        this.play = play;
     }
 }

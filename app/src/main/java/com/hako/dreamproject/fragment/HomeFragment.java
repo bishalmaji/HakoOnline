@@ -2,8 +2,11 @@ package com.hako.dreamproject.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -23,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
@@ -35,7 +39,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.hako.dreamproject.ActivityTracker;
+import com.hako.dreamproject.DiscoverPeople;
 import com.hako.dreamproject.HomeActivity;
 import com.hako.dreamproject.LoginActivity;
 import com.hako.dreamproject.PlayWithFriends;
@@ -63,6 +74,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.hako.dreamproject.utils.Constant.API;
 import static com.hako.dreamproject.utils.Constant.BASEURL;
 import static com.hako.dreamproject.utils.Constant.DATA;
@@ -78,6 +90,7 @@ import static com.hako.dreamproject.utils.Constant.TOKEN;
 import static com.hako.dreamproject.utils.Constant.USERID;
 
 public class HomeFragment extends Fragment {
+    DocumentReference myDocRef;
 
     View rootView;
     List<GameModel> gameModelList = new ArrayList<>();
@@ -87,24 +100,31 @@ public class HomeFragment extends Fragment {
     RecyclerView rvMore;
     SwipeRefreshLayout swipetoRefresh;
     BottomSheetDialog bottomSheetDialog;
+    LinearLayout discoverpeople;
+
+    public static int val1 = 0;
+    public static int val2 = 0;
+    public static int val3 = 0;
+
+
     LinearLayout loading, playWithFriends;
     LinearLayout noItem;
     NestedScrollView scrollView;
-    ImageView ivUserProfile, homeGif1, homeGif2;
+    ImageView ivUserProfile, homeGif1, homeGif2, coin_img;
 
     Random randoms;
     ImageView daily;
-    String entry ="Entry Fee : ";
+    String entry = "Entry Fee : ";
 
     // TAG
     String TAG_HOME_FRAGMENT = "homeFragment";
 
     // TextView
     TextView tvProfileIcon;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.home_fragment, container, false);
-
         setViews();
         setOnClickListener();
 
@@ -112,7 +132,7 @@ public class HomeFragment extends Fragment {
 
         loading.setVisibility(View.VISIBLE);
         TextView points = rootView.findViewById(R.id.points);
-        if(AppController.getInstance().getCoins()!=null)
+        if (AppController.getInstance().getCoins() != null)
             points.setText(numberCalculation(Integer.parseInt(AppController.getInstance().getCoins())));
         else
             points.setText("0");
@@ -130,25 +150,49 @@ public class HomeFragment extends Fragment {
         playWithFriends = rootView.findViewById(R.id.imageView5);
         playWithFriends.setOnClickListener(v -> startActivity(new Intent(getContext(), PlayWithFriends.class)));
 
+        discoverpeople=rootView.findViewById(R.id.discoverpeople);
+        discoverpeople.setOnClickListener(v -> startActivity(new Intent(getContext(), DiscoverPeople.class)));
+
         homeGif1 = rootView.findViewById(R.id.home_screen_gif1);
         homeGif2 = rootView.findViewById(R.id.home_screen_gif2);
+        coin_img = rootView.findViewById(R.id.coin_img);
 
-        Glide.with(this).load(R.drawable.splash_screen_gif).into(homeGif1);
-        Glide.with(this).load(R.drawable.homegif2).into(homeGif2);
 
-        if(UsableFunctions.checkLoggedInOrNot()){
-            Glide.with(requireContext())
-                    .load(AppController.getInstance().getProfile())
-                    .centerCrop()
-                    .circleCrop()
-                    .placeholder(R.drawable.profile_holder)
-                    .into(ivUserProfile);
+        try {
+            Glide.with(this).load(R.drawable.invite_friend).into(homeGif1);
+            Glide.with(this).load(R.drawable.discoverpeople).into(homeGif2);
+            Glide.with(this).load(R.drawable.coin).into(coin_img);
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
         }
 
+        if (UsableFunctions.checkLoggedInOrNot()) {
+            myDocRef= FirebaseFirestore.getInstance().collection("ProfileData").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            myDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+             @Override
+             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                 if (task.isSuccessful()&&task.getResult()!=null){
+                     if (getActivity()==null){
+                         return;
+                     }
+                     String   imageStr= task.getResult().getString("profile");
+                     Glide.with(getActivity())
+                             .load(imageStr)
+                             .centerCrop()
+                             .circleCrop()
+                             .placeholder(R.drawable.profile_holder)
+                             .into(ivUserProfile);
+                 }
+             }
+         });
+        }
         getPlayerData();
         return rootView;
     }
-    private void setViews(){
+
+
+    private void setViews() {
         rvGame = rootView.findViewById(R.id.rvGame);
         rvMore = rootView.findViewById(R.id.rvMore);
         swipetoRefresh = rootView.findViewById(R.id.pulltorefresh);
@@ -159,12 +203,15 @@ public class HomeFragment extends Fragment {
         scrollView.setVisibility(View.GONE);
         daily = rootView.findViewById(R.id.daily);
 
+
+
         // TextView
 
         // ImageView
         ivUserProfile = rootView.findViewById(R.id.iv_homeFrag_userProfile);
     }
-    private void setOnClickListener(){
+
+    private void setOnClickListener() {
         swipetoRefresh.setOnRefreshListener(() -> {
             swipetoRefresh.setRefreshing(true);
             getPlayerData();
@@ -179,11 +226,11 @@ public class HomeFragment extends Fragment {
 
         });
         daily.setOnClickListener(view -> {
-            if(AppController.getInstance().getId().equalsIgnoreCase("0")){
-                Intent intent = new Intent(getContext(),LoginActivity.class);
+            if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+                Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            }else{
+            } else {
 //                goForDaily();
                 Intent intent = new Intent(getContext(), QuizActivity.class);
                 startActivity(intent);
@@ -228,7 +275,7 @@ public class HomeFragment extends Fragment {
                         String roomId = "";
                         String playerId = "1";
 
-                        if(UsableFunctions.checkLoggedInOrNot()){
+                        if (UsableFunctions.checkLoggedInOrNot()) {
                             playerUserName = AppController.getInstance().getName();
                             playerAvatarUrl = AppController.getInstance().getProfile();
                         }
@@ -239,12 +286,13 @@ public class HomeFragment extends Fragment {
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject dataobj = dataArray.getJSONObject(i);
                             roomId = UsableFunctions.getGameRoomId();
-                            try{
+                            try {
                                 String name[] = playerUserName.split(" ");
-                                if(name.length > 1){
+                                if (name.length > 1) {
                                     playerUserName = name[0];
                                 }
-                            }catch (Exception e){ }
+                            } catch (Exception e) {
+                            }
 
                             String url = dataobj.getString("url") + "?playerusername=" + playerUserName
                                     + "&playeravatarurl=" + playerAvatarUrl;
@@ -283,7 +331,8 @@ public class HomeFragment extends Fragment {
         Bnner ru = new Bnner();
         ru.execute();
     }
-    private void setUpRecyclerView(List<GameModel> popularGames, List<GameModel> gameModelList){
+
+    private void setUpRecyclerView(List<GameModel> popularGames, List<GameModel> gameModelList) {
         moreAdapter = new MoreAdapter(getActivity(), gameModelList);
         rvMore.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         rvMore.setItemAnimator(new DefaultItemAnimator());
@@ -302,6 +351,7 @@ public class HomeFragment extends Fragment {
         moreAdapter.notifyDataSetChanged();
         playerAdapter.notifyDataSetChanged();
     }
+
     public class MoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Context context;
         LayoutInflater inflater;
@@ -359,12 +409,50 @@ public class HomeFragment extends Fragment {
             } catch (Exception e) {
                 Log.e(TAG_HOME_FRAGMENT, "exp: " + e.getMessage());
             }
+
             myHolder.holdres.setOnClickListener(
                     view ->
-                    startGame(current.getId(), current.getName(), current.getImage(), current.getUrl(), current.getRotation())
+                            startGame(current.getId(), current.getName(), current.getImage(), current.getUrl(), current.getRotation())
+
             );
 
+            if (getCount() == null) {
+                insertData("1", current.getImage());
+
+            } else {
+                int val = Integer.parseInt(getCount()) + 1;
+                insertData(String.valueOf(val), current.getImage());
+            }
+
         }
+
+        SQLiteDatabase db;
+
+        void insertData(String count, String img) {
+            Cursor c = null;
+            db = getActivity().openOrCreateDatabase("UserData", MODE_PRIVATE, null);
+            String sql = "create table if not exists userfav (count text,img text);";
+            db.execSQL(sql);
+            ContentValues values = new ContentValues();
+            values.put("count", count);
+            values.put("img", img);
+
+            db.insert("userfav", null, values);
+        }
+
+        String getCount() {
+            Cursor c = null;
+            String i = "1";
+            db = getActivity().openOrCreateDatabase("UserData", MODE_PRIVATE, null);
+            db.execSQL("create table if not exists userfav (count text,img text);");
+            c = db.rawQuery("select * from userfav;", null);
+            c.moveToFirst();
+            for (int ii = 0; c.moveToPosition(ii); ii++) {
+                i = c.getString(0);
+            }
+            return i;
+        }
+
 
         // return total item from List
         @Override
@@ -424,7 +512,7 @@ public class HomeFragment extends Fragment {
                 Log.e(ERROR, s);
                 try {
                     JSONObject obj = new JSONObject(s);
-                    if(obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
+                    if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
                         Toast.makeText(getContext(), obj.getString(MESSAGE), Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getContext(), obj.getString(MESSAGE), Toast.LENGTH_LONG).show();
@@ -530,9 +618,8 @@ public class HomeFragment extends Fragment {
                     startActivity(i);
                     getActivity().finish();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                }
-                else {
-                    Log.e("HomeFragment", "val "+id);
+                } else {
+                    Log.e("HomeFragment", "val " + id);
                     int mypoint = Integer.parseInt(AppController.getInstance().getCoins());
                     int fee = Integer.parseInt(total + "");
                     if (mypoint >= fee) {
@@ -595,7 +682,8 @@ public class HomeFragment extends Fragment {
         bottomSheetDialog.show();
 
     }
-    private void startGame(String id, String names, String image, String url, String rotation){
+
+    private void startGame(String id, String names, String image, String url, String rotation) {
         int fee = 20;
         if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
             bottomSheetDialog.dismiss();
@@ -603,10 +691,9 @@ public class HomeFragment extends Fragment {
             startActivity(i);
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        } else if(id.equals("3") || id.equals("4")) {
+        } else if (id.equals("3") || id.equals("4")) {
             Toast.makeText(getActivity(), "Coming Soon...", Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             AppController.getInstance().setCoins("10000");
             int mypoint = Integer.parseInt(AppController.getInstance().getCoins());
 //            int fee = Integer.parseInt(total + "");

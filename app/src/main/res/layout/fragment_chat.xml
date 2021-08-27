@@ -7,31 +7,16 @@
     tools:context=".fragment.ChatFragment">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/hako_logo"
-        android:alpha="0.1"/>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:id="@+id/empty_chat_img"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:alpha="0.6"
+        android:src="@drawable/message_screen"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:cardElevation="10dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:text="Chat"
-            android:textColor="@color/black"
-            android:textSize="30dp"
-            android:fontFamily="@font/mrsmonsterexpandital"
-            android:layout_gravity="center"/>
-
-    </androidx.cardview.widget.CardView>
+        app:layout_constraintTop_toTopOf="parent" />
+    <!--    android:alpha="0.1"-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_chat_groupChat"
@@ -42,6 +27,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

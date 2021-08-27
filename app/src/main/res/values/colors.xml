@@ -16,7 +16,9 @@
     <color name="yellow">#FFC107</color>
     <color name="green_fad">#8BC34A</color>
 
-
+    <color name="overlay_dark_10">#1A000000</color>
+    <color name="overlay_dark_20">#33000000</color>
+    <color name="overlay_dark_30">#4D000000</color>
 <!--    faded       -->
     <color name="yellow_faded">#60FFC107</color>
 

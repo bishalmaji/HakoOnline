@@ -30,7 +30,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.hako.dreamproject.fragment.ChatFragment;
+import com.hako.dreamproject.fragment.ChatTabHolderFragment;
 import com.hako.dreamproject.fragment.HomeFragment;
 import com.hako.dreamproject.fragment.ProfileFragment;
 import com.hako.dreamproject.fragment.RewardFragment;
@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity {
     ImageView ivFreindInvitationProfile;
 
     // Button
-    TextView btnInvitationAccept, btnInvitationReject;
+    TextView btnInvitationAccept, btnInvitationReject,btn_notnow;
 
     // Firebase
     FirebaseFirestore db;
@@ -109,7 +109,8 @@ public class HomeActivity extends AppCompatActivity {
             home();
         });
         chatPressed.setOnClickListener(view -> {
-            loadFragment(new ChatFragment());
+            Log.d("lifecheck", "chatpressed: homeactivity ");
+            loadFragment(new ChatTabHolderFragment());
             chat();
         });
         rewardPressed.setOnClickListener(view -> {
@@ -146,10 +147,13 @@ public class HomeActivity extends AppCompatActivity {
 
         //TextView
         tvFreindInvitationName = findViewById(R.id.tv_homeActivityCardView_freindName);
+        // for making the visibility invisible
+
 
         //Button
         btnInvitationAccept = findViewById(R.id.btn_homeActivityCardView_accept);
         btnInvitationReject = findViewById(R.id.btn_homeActivityCardView_reject);
+        btn_notnow  = findViewById(R.id.btn_homeActivityCardView_notnow );
 
         //firebase
         db = FirebaseFirestore.getInstance();
@@ -211,9 +215,7 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "Rejected", Toast.LENGTH_SHORT).show();
         });
         btnInvitationAccept.setOnClickListener( view -> {
-            addChatRoomInUser(chatRoomId,
-                    myId, myName, myProfile,
-                    senderId, freindName, freindProfileImage);
+            addChatRoomInUser(chatRoomId, myId, myName, myProfile, senderId, freindName, freindProfileImage);
             deleteInvitationRequest(invitationId);
             caViewInvitation.setVisibility(View.INVISIBLE);
             Intent intent = new Intent(this, chatActivity.class);
@@ -221,21 +223,33 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra("reciverId", senderId);
             startActivity(intent);
         });
+        btn_notnow.setOnClickListener( view -> {
+           /* addChatRoomInUser(chatRoomId,
+                    myId, myName, myProfile,
+                    senderId, freindName, freindProfileImage);*/
+
+
+           // deleteInvitationRequest(invitationId);
+            // can we do something with invitaton id
+
+            caViewInvitation.setVisibility(View.INVISIBLE);
+            Toast.makeText(this, "Not Now", Toast.LENGTH_SHORT).show();
+        });
+
     }
 
     private void addChatRoomInUser(String chatRoomId,
                                    String myId, String myName, String myProfile,
                                    String freindId, String freindName, String freindProfileImage){
-        // my room
         DocumentReference docRef = db.collection("USERS").document(myId)
                 .collection("chatRooms").document(chatRoomId);
-        chatRoom myChatRoom = new chatRoom(chatRoomId, 0, freindId, freindName, 0, freindProfileImage);
+        chatRoom myChatRoom = new chatRoom(chatRoomId, "0", freindId, freindName, "0", freindProfileImage, "n");
         docRef.set(myChatRoom);
 
         // Freind room
         DocumentReference freindRef = db.collection("USERS").document(freindId)
                 .collection("chatRooms").document(chatRoomId);
-        chatRoom freindChatRoom = new chatRoom(chatRoomId, 0, myId, myName, 0, myProfile);
+        chatRoom freindChatRoom = new chatRoom(chatRoomId, "0", myId, myName, "0", myProfile, "n");
         freindRef.set(freindChatRoom);
     }
     private void deleteInvitationRequest(String invitationId){

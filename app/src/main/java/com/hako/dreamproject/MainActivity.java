@@ -24,13 +24,23 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.JsonObject;
 import com.hako.dreamproject.model.Online;
+import com.hako.dreamproject.model.chatRoom;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.Constant;
 import com.hako.dreamproject.utils.RequestHandler;
@@ -43,7 +53,10 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -100,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
     TextView player1, player2;
 
     String playerName, playerImg, myName;
+    //variables for adding chat
+    List<String> invitationList;
 
     @SuppressLint({"ObsoleteSdkInt", "SetJavaScriptEnabled"})
     @Override
@@ -111,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         setContentView(R.layout.activity_main);
-
+        invitationList = new ArrayList<>();
         webView = findViewById(R.id.webView_playGameActivity_playGame);
         playerName = getIntent().getStringExtra("playerName");
         playerImg = getIntent().getStringExtra("playerImg");
@@ -209,6 +224,8 @@ public class MainActivity extends AppCompatActivity {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //add firebase data here
+                addChatRoomInUser();
                 flag[0] = 1;
                 webView.setVisibility(View.VISIBLE);
                 clPokerTable.setVisibility(View.GONE);
@@ -251,6 +268,80 @@ public class MainActivity extends AppCompatActivity {
 
         /////// GET SECOND USER /////////////////////////////
 
+    }
+    private void addChatRoomInUser(){
+        //checking invite
+        CollectionReference colRef = FirebaseFirestore.getInstance().collection("INVITATION");
+        colRef.whereEqualTo("receiverId", AppController.getInstance().getUser_unique_id())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if(!invitationList.contains(document.getId())){
+                                    invitationList.add(document.getId());
+                                    //getting the datas
+                                    String myId = AppController.getInstance().getUser_unique_id();
+                                    String myName = AppController.getInstance().getName();
+                                    String myProfile = AppController.getInstance().getProfile();
+                                    String senderId = (String) document.getData().get("senderId");
+                                    String freindName = (String) document.getData().get("senderName");
+                                    String freindProfileImage = (String) document.getData().get("senderImage");
+                                    String chatRoomId = (String) document.getData().get("chatRoomId");
+                                    // my room
+                                    DocumentReference docRef = FirebaseFirestore.getInstance().collection("USERS").document(myId)
+                                            .collection("chatRooms").document(chatRoomId);
+//
+                                    Map<String,Object> myChatRoom=new HashMap<>();
+                                    myChatRoom.put("chatRoomId",chatRoomId);
+                                    myChatRoom.put("myScore","0");
+                                    myChatRoom.put("friendId",senderId);
+                                    myChatRoom.put("friendName",freindName);
+                                    myChatRoom.put("friendScore","0");
+                                    myChatRoom.put("friendProfile",freindProfileImage);
+                                    myChatRoom.put("play","y");
+
+                                    docRef.set(myChatRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            // Freind room
+                                            DocumentReference freindRef = FirebaseFirestore.getInstance().collection("USERS").document(senderId)
+                                                    .collection("chatRooms").document(chatRoomId);
+
+                                            Map<String,Object> freindChatRoom=new HashMap<>();
+                                            myChatRoom.put("chatRoomId",chatRoomId);
+                                            myChatRoom.put("myScore","0");
+                                            myChatRoom.put("friendId",myId);
+                                            myChatRoom.put("friendName",myName);
+                                            myChatRoom.put("friendScore","0");
+                                            myChatRoom.put("friendProfile",myProfile);
+                                            myChatRoom.put("play","y");
+                                            freindRef.set(freindChatRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    deleteInvitationRequest(document.getId());
+                                                }
+                                            });
+                                        }
+                                    });
+
+
+
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+
+    }
+    private void deleteInvitationRequest(String invitationId){
+        DocumentReference docRef = FirebaseFirestore.getInstance().collection("INVITATION").document(invitationId);
+        docRef.delete();
+        Toast.makeText(this, "Invite added to chat ", Toast.LENGTH_LONG).show();
+        Log.d("inviteChat", "deleteInvitationRequest: done");
     }
 
     public class ChromeClient extends WebChromeClient {
@@ -391,7 +482,6 @@ public class MainActivity extends AppCompatActivity {
             String friendScore = chatObject.getString("friendScore");
             String friendProfile = chatObject.getString("friendProfile");
             String friendName = chatObject.getString("friendName");
-            Log.d(TAG_MAIN_ACTIVITY, "In onBackPressed chatRoomId: " + chatRoomId);
             goToChatActivity(chatRoomId, myScore,
                                 friendId, friendScore, friendProfile, friendName);
         } catch (JSONException e) {
@@ -404,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, chatActivity.class);
         intent.putExtra("chatRoomId", chatRoomId);
         intent.putExtra("reciverId", freindId);
-        intent.putExtra("myScore", myScore);
+        intent.putExtra("myScore", Long.parseLong(myScore));
         intent.putExtra("freindProfile", freindProfile);
         intent.putExtra("freindName", freindName);
         startActivity(intent);

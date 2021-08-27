@@ -57,16 +57,19 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.myVi
     }
 
     public class myViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivGroupChatImage;
+        ImageView ivGroupChatImage,ivStatus;
         TextView tvChatTitle;
+
         public myViewHolder(@NonNull View itemView) {
             super(itemView);
             ivGroupChatImage = itemView.findViewById(R.id.iv_charCard_groupChatImage);
             tvChatTitle = itemView.findViewById(R.id.tv_chatCard_chatTitle);
+            ivStatus=itemView.findViewById(R.id.iv_stat);
         }
         public void bind(String title, String friendProfile){
             Glide.with(activity).load(friendProfile).circleCrop().into(ivGroupChatImage);
             tvChatTitle.setText(title);
+
         }
     }
 }

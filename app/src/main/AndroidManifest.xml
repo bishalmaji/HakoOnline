@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Permissons required by the App -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Permissons required by the App -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -27,9 +28,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DreamProject"
         android:usesCleartextTraffic="true">
-        <activity android:name=".PlayWithFriends"
+        <activity android:name=".EditProfileActivity"></activity>
+        <activity
+            android:name=".Settings"
+            android:exported="true" />
+        <activity
+            android:name=".DiscoverPeople"
+            android:exported="true" />
+        <activity
+            android:name=".PendingRequests"
+            android:exported="true" />
+        <activity
+            android:name=".PlayWithFriends"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".activities.QuizActivity"
             android:screenOrientation="portrait"
@@ -94,7 +106,10 @@
             android:theme="@style/Theme.DreamProject.NoActionBar" />
         <activity
             android:name=".Maintance"
-            android:theme="@style/Theme.DreamProject.NoActionBar" />
+            android:theme="@style/Theme.DreamProject.NoActionBar" /> <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
     </application>
 
 </manifest>

@@ -15,6 +15,46 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 public class RequestHandler {
+    public String updateRequest(String requestURL, HashMap<String, String> postDataParams){
+        URL url;
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            url = new URL(requestURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("PATCH");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+            OutputStream os = conn.getOutputStream();
+
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getPostDataString(postDataParams));
+
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                sb = new StringBuilder();
+                String response;
+
+                while ((response = br.readLine()) != null) {
+                    sb.append(response);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
     public String sendPostRequest(String requestURL, HashMap<String, String> postDataParams) {
         URL url;
 

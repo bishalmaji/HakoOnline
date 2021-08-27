@@ -1,8 +1,11 @@
 package com.hako.dreamproject;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,10 +14,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.RequestHandler;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -28,10 +36,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.hako.dreamproject.utils.Constant.BASEURL;
 import static com.hako.dreamproject.utils.Constant.ERROR;
@@ -51,11 +61,13 @@ public class LoginActivity extends AppCompatActivity {
     TextView goodmoring;
     GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 7;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+        db=FirebaseFirestore.getInstance();
         loginWithGoogle = findViewById(R.id.login_with_google);
         refer = findViewById(R.id.refer);
         packman = findViewById(R.id.img_hori);
@@ -77,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestIdToken("42809996726-2aabef2tr5bibsr2rkr0ri0h3j7cdnkp.apps.googleusercontent.com")
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken("518654146741-5fa7vqkh8v7kd0145rdkrpj2onlrkhb7.apps.googleusercontent.com")
 //                .requestIdToken("735929854041-kig5f76te5rhaab3q9qe1m6h4m2vf7vt.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
@@ -126,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                         email = user.getEmail();
                         profile = user.getPhotoUrl().toString();
                         phone = "0";
+                        addDatatoFirebase();
                         login();
                     } else {
                         Log.e("TAG", "signInWithCredential:failure", task.getException());
@@ -133,6 +146,17 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void addDatatoFirebase() {
+    DocumentReference  myDocRef=db.collection("ProfileData").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+    Map<String ,Object> params=new HashMap<>();
+        params.put("register_or_login", "1");
+        params.put("email", email);
+        params.put("profile", profile);
+        params.put("name", name);
+        params.put("refer", code);
+        myDocRef.set(params);
     }
 
     public void login() {

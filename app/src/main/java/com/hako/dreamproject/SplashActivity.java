@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.MobileAds;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.Constant;
 import com.hako.dreamproject.utils.RequestHandler;
@@ -37,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
     String profile;
     FirebaseAuth mAuth;
 
-    ImageView finalGif;
+    ImageView finalGif, imagesplash;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,10 +47,16 @@ public class SplashActivity extends AppCompatActivity {
         EmojiManager.install(new GoogleEmojiProvider());
 
         finalGif = findViewById(R.id.finalGif);
+        imagesplash = findViewById(R.id.imageView4);
 
-        Glide.with(this).load(R.drawable.hako_title_new).into(finalGif);
 
         mAuth = FirebaseAuth.getInstance();
+        try {
+            Glide.with(this).load(R.drawable.splash_screen_icon).into(imagesplash);
+            Glide.with(this).load(R.drawable.hako_title_new).into(finalGif);
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage() + "", Toast.LENGTH_SHORT).show();
+        }
         if (!isEmulator()) {
 
             new Handler().postDelayed(() -> {

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DiscoverPeople">
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="0dp"
+        android:layout_height="180dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.627"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_rank2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_rankone"
+        app:layout_constraintStart_toStartOf="@+id/view3" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_rankone"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="16dp"
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintEnd_toStartOf="@+id/iv_rank3"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toEndOf="@+id/iv_rank2"
+        app:layout_constraintTop_toTopOf="@+id/view3" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_rank3"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="32dp"
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_rankone"
+        app:layout_constraintEnd_toEndOf="@+id/view3" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_discover_rank_name"
+        android:backgroundTint="#BDE6E2"
+        android:padding="2dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="5dp"
+        android:text="Superstar"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rank2"
+        app:layout_constraintStart_toStartOf="@+id/iv_rank2"
+        app:layout_constraintTop_toBottomOf="@+id/iv_rank2" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_discover_rank_name"
+        android:backgroundTint="#FDD763"
+        android:padding="2dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="5dp"
+        android:text="Megastar"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rankone"
+        app:layout_constraintStart_toStartOf="@+id/iv_rankone"
+        app:layout_constraintTop_toBottomOf="@+id/iv_rankone" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_discover_rank_name"
+        android:backgroundTint="#FB7A70"
+        android:padding="2dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="5dp"
+        android:text="Star"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rank3"
+        app:layout_constraintStart_toStartOf="@+id/iv_rank3"
+        app:layout_constraintTop_toBottomOf="@+id/iv_rank3" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/secondpoint"
+        app:layout_constraintTop_toTopOf="@+id/secondpoint"
+        app:srcCompat="@drawable/coin" />
+
+    <TextView
+        android:id="@+id/secondpoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rank2"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/iv_rank2"
+        app:layout_constraintTop_toBottomOf="@+id/secondname" />
+
+    <TextView
+        android:id="@+id/firstpoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rankone"
+        app:layout_constraintHorizontal_bias="0.612"
+        app:layout_constraintStart_toStartOf="@+id/iv_rankone"
+        app:layout_constraintTop_toBottomOf="@+id/firstname" />
+
+    <ImageView
+        android:id="@+id/imageView16"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/firstpoint"
+        app:layout_constraintTop_toTopOf="@+id/firstpoint"
+        app:srcCompat="@drawable/coin" />
+
+    <ImageView
+        android:id="@+id/imageView17"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/thirdpoint"
+        app:layout_constraintTop_toTopOf="@+id/thirdpoint"
+        app:srcCompat="@drawable/coin" />
+
+    <TextView
+        android:id="@+id/thirdpoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rank3"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/iv_rank3"
+        app:layout_constraintTop_toBottomOf="@+id/thirdname" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="22dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_circle"
+        android:backgroundTint="#DC453B"
+        android:gravity="center"
+        android:text="3"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="22dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_circle"
+        android:backgroundTint="#FF9800"
+        android:gravity="center"
+        android:text="1"
+        app:layout_constraintBottom_toBottomOf="@+id/textView18"
+        app:layout_constraintStart_toStartOf="@+id/textView18"
+        app:layout_constraintTop_toTopOf="@+id/textView18" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="22dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_circle"
+        android:backgroundTint="#6DAAA4"
+        android:gravity="center"
+        android:text="2"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/secondname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rank2"
+        app:layout_constraintStart_toStartOf="@+id/iv_rank2"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/firstname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rankone"
+        app:layout_constraintStart_toStartOf="@+id/iv_rankone"
+        app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+    <TextView
+        android:id="@+id/thirdname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rank3"
+        app:layout_constraintStart_toStartOf="@+id/iv_rank3"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

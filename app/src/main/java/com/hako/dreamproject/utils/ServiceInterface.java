@@ -4,8 +4,10 @@ package com.hako.dreamproject.utils;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 
 public interface ServiceInterface {
@@ -19,4 +21,5 @@ public interface ServiceInterface {
             @Part("ORDER_ID") RequestBody order_id,
             @Part("AMOUNT") RequestBody amount
     );
+
 }

@@ -110,6 +110,8 @@ public class PlayWithFriends extends AppCompatActivity {
         inviteMap.put("chatRoomId", chatRoomId);
         inviteMap.put("receiverId", friendId);
 
+        //
+        // it sets the data named invitaion in to our app
         db.collection("INVITATION")
                 .document(invitationId)
                 .set(inviteMap)
