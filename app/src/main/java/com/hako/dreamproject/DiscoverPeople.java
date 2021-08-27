@@ -43,12 +43,14 @@ public class DiscoverPeople extends AppCompatActivity {
     RecyclerView discover_recycler;
     ArrayList<String > user_id=new ArrayList<>();
     ArrayList<String> points=new ArrayList<>();
+    ArrayList<Long>  pointsLong=new ArrayList<>();
     ArrayList<String > userid=new ArrayList<>();
     ArrayList<String > name=new ArrayList<>();
     ArrayList<String > user_unique_id=new ArrayList<>();
     ArrayList<String> profile=new ArrayList<>();
      CircleImageView ivr1,ivr2,ivr3;
      TextView name1,name2,name3,p1,p2,p3;
+     private    int maxindex1,maxindex2,maxindex3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +116,7 @@ public class DiscoverPeople extends AppCompatActivity {
                     JSONObject jsonObject1=jsonArray.getJSONObject(i);
                     user_id.add(jsonObject1.getString("user_id"));
                     points.add(jsonObject1.getString("points"));
-
+                    pointsLong.add(Long.valueOf(jsonObject1.getString("points")));
                     JSONObject jsonArray1=jsonObject1.getJSONObject("userData");
                     userid.add(jsonArray1.getString("userid"));
                     name.add(jsonArray1.getString("name"));
@@ -127,38 +129,64 @@ public class DiscoverPeople extends AppCompatActivity {
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            if (profile.size()>=3){
-                Glide.with(DiscoverPeople.this).load(profile.get(0)).into(ivr1);
-                Glide.with(DiscoverPeople.this).load(profile.get(1)).into(ivr2);
-                Glide.with(DiscoverPeople.this).load(profile.get(2)).into(ivr3);
-                name1.setText(name.get(0));
-                name2.setText(name.get(1));
-                name3.setText(name.get(2));
-                p1.setText(points.get(0));
-                p2.setText(points.get(1));
-                p3.setText(points.get(2));
+            int ranknotpresent= findrank();
+            if (ranknotpresent==0) {
+                Glide.with(DiscoverPeople.this).load(profile.get(maxindex1)).into(ivr1);
+                Glide.with(DiscoverPeople.this).load(profile.get(maxindex2)).into(ivr2);
+                Glide.with(DiscoverPeople.this).load(profile.get(maxindex3)).into(ivr3);
+                name1.setText(name.get(maxindex1));
+                name2.setText(name.get(maxindex2));
+                name3.setText(name.get(maxindex3));
+                p1.setText(points.get(maxindex1));
+                p2.setText(points.get(maxindex2));
+                p3.setText(points.get(maxindex3));
                 DiscoverPeopleAdapter adapter = new DiscoverPeopleAdapter(DiscoverPeople.this, user_id, points, userid, name, user_unique_id, profile);
                 discover_recycler.setAdapter(adapter);
-            }else if (profile.size()==2){
-                Glide.with(DiscoverPeople.this).load(profile.get(0)).into(ivr1);
-                Glide.with(DiscoverPeople.this).load(profile.get(1)).into(ivr2);
-                name1.setText(name.get(0));
-                name2.setText(name.get(1));
-                p1.setText(points.get(0));
-                p2.setText(points.get(1));
+            }
+            else if (ranknotpresent==1){
+            //no data available
+            }else if (ranknotpresent==2){
+                //no rank 2 available
+                Glide.with(DiscoverPeople.this).load(profile.get(maxindex1)).into(ivr1);
+                name1.setText(name.get(maxindex1));
+                p1.setText(points.get(maxindex1));
                 DiscoverPeopleAdapter adapter = new DiscoverPeopleAdapter(DiscoverPeople.this, user_id, points, userid, name, user_unique_id, profile);
                 discover_recycler.setAdapter(adapter);
-            }else if (profile.size()==1){
-                Glide.with(DiscoverPeople.this).load(profile.get(0)).into(ivr1);
-                name1.setText(name.get(0));
-                p1.setText(points.get(0));
+            }else if (ranknotpresent==3){
+                //no rank 3 available
+                Glide.with(DiscoverPeople.this).load(profile.get(maxindex1)).into(ivr1);
+                Glide.with(DiscoverPeople.this).load(profile.get(maxindex2)).into(ivr2);
+                name1.setText(name.get(maxindex1));
+                name2.setText(name.get(maxindex2));
+                p1.setText(points.get(maxindex1));
+                p2.setText(points.get(maxindex2));
                 DiscoverPeopleAdapter adapter = new DiscoverPeopleAdapter(DiscoverPeople.this, user_id, points, userid, name, user_unique_id, profile);
                 discover_recycler.setAdapter(adapter);
-            }else {
-                Toast.makeText(DiscoverPeople.this, "No name in the LeaderBoard", Toast.LENGTH_SHORT).show();
             }
 
 
+        }
+        public int getIndexOfLargest(ArrayList<Long> array)
+          {
+            if ( array == null || array.size() == 0 ) return -1; // null or empty
+            int largest = 0;
+            for ( int i = 1; i < array.size(); i++ )
+            {
+                if ( array.get(i) > array.get(largest) ) largest = i;
+            }
+            return largest; // position of the first largest found
+        }
+
+        private int findrank() {
+          maxindex1=getIndexOfLargest(pointsLong);
+         pointsLong.remove(maxindex1);
+          maxindex2=getIndexOfLargest(pointsLong)+1;
+         pointsLong.remove(maxindex2-1);
+         maxindex3=getIndexOfLargest(pointsLong);
+         if (maxindex1==-1) return 1;
+         else if (maxindex2-1==-1) return 2;
+         else if (maxindex3==-1)return 3;
+         else return 0;
         }
 
     }
