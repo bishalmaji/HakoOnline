@@ -48,6 +48,7 @@ import java.util.TimerTask;
 import static com.hako.dreamproject.utils.Constant.UPDATEURL;
 
 public class HomeActivity extends AppCompatActivity {
+   String myId;
     LinearLayout homePressed;
     LinearLayout chatPressed;
     LinearLayout rewardPressed;
@@ -165,7 +166,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setInviteListner(){
         invitationList = new ArrayList<>();
-        String myId = AppController.getInstance().getUser_unique_id();
+        myId = AppController.getInstance().getUser_unique_id();
+        if (myId==null){
+           myId= AppController.getInstance().sharedPref.getString("userUniqueId","12345");
+        }
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -194,7 +198,6 @@ public class HomeActivity extends AppCompatActivity {
     }
     private void showInviteDialog(Map<String, Object> data, String invitationId){
         caViewInvitation.setVisibility(View.VISIBLE);
-        String myId = AppController.getInstance().getUser_unique_id();
         String myName = AppController.getInstance().getName();
         String myProfile = AppController.getInstance().getProfile();
         String senderId = (String) data.get("senderId");
@@ -238,8 +241,7 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    private void addChatRoomInUser(String chatRoomId,
-                                   String myId, String myName, String myProfile,
+    private void addChatRoomInUser(String chatRoomId,String myId, String myName, String myProfile,
                                    String freindId, String freindName, String freindProfileImage){
         DocumentReference docRef = db.collection("USERS").document(myId)
                 .collection("chatRooms").document(chatRoomId);

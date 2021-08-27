@@ -112,7 +112,7 @@ public class AppController extends Application {
         this.status = token;
     }
 
-    private SharedPreferences sharedPref;
+    public SharedPreferences sharedPref;
     private static AppController mInstance;
 
     public String getCoins() {
@@ -239,5 +239,7 @@ public class AppController extends Application {
     public void saveData() {
         sharedPref.edit().putString(getString(R.string.settings_account_id), this.getId()).apply();
         sharedPref.edit().putString(getString(R.string.token), this.getToken()).apply();
+        sharedPref.edit().putString("userUniqueId",this.getUser_unique_id()).apply();
+        sharedPref.edit().putString("points",this.getCoins()).apply();
     }
 }

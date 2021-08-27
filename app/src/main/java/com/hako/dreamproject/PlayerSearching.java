@@ -94,6 +94,7 @@ public class PlayerSearching extends AppCompatActivity {
     Boolean imageSearch = true;
 
     String TAG_PLAYER_SEARCHING = "playerSearching";
+    String coins;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -345,7 +346,12 @@ public class PlayerSearching extends AppCompatActivity {
                 try {
                     JSONObject obj = new JSONObject(s);
                     if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
-                        int parse = Integer.parseInt(AppController.getInstance().getCoins()) - Integer.parseInt(entryFee);
+                        if (AppController.getInstance().getCoins()==null)
+                        coins=  AppController.getInstance().sharedPref.getString("points","0");
+                        else
+                            coins= AppController.getInstance().getCoins();
+
+                        int parse = Integer.parseInt(coins) - Integer.parseInt(entryFee);
                         AppController.getInstance().setCoins(parse + "");
                         Intent intent;
                         intent = new Intent(getApplicationContext(), MainActivity.class);

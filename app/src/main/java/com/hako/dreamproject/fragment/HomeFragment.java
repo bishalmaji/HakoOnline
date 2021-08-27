@@ -91,7 +91,6 @@ import static com.hako.dreamproject.utils.Constant.USERID;
 
 public class HomeFragment extends Fragment {
     DocumentReference myDocRef;
-
     View rootView;
     List<GameModel> gameModelList = new ArrayList<>();
     List<GameModel> populor = new ArrayList<>();
@@ -115,12 +114,13 @@ public class HomeFragment extends Fragment {
     Random randoms;
     ImageView daily;
     String entry = "Entry Fee : ";
-
     // TAG
     String TAG_HOME_FRAGMENT = "homeFragment";
 
     // TextView
     TextView tvProfileIcon;
+    //points
+    String pointsStr;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -132,10 +132,11 @@ public class HomeFragment extends Fragment {
 
         loading.setVisibility(View.VISIBLE);
         TextView points = rootView.findViewById(R.id.points);
-        if (AppController.getInstance().getCoins() != null)
-            points.setText(numberCalculation(Integer.parseInt(AppController.getInstance().getCoins())));
+        pointsStr=AppController.getInstance().getCoins();
+        if (pointsStr== null)
+            points.setText(numberCalculation(Long.parseLong(AppController.getInstance().sharedPref.getString("points","0"))));
         else
-            points.setText("0");
+            points.setText(numberCalculation(Long.parseLong(AppController.getInstance().getCoins())));
 
 
         points.setOnClickListener(v -> {

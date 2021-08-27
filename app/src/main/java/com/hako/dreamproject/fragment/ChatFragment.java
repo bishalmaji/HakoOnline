@@ -55,6 +55,7 @@ public class ChatFragment extends Fragment {
     // String
     String TAG_CHAT_FRAGMENT = "chatFragment";
     FirestoreRecyclerAdapter<chatRoom,ChatViewHolder> adapter;
+    String userUniqueId;
     public ChatFragment() {
         // Required empty public constructor
     }
@@ -64,14 +65,13 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_chat, container, false);
-
+        userUniqueId = AppController.getInstance().getUser_unique_id();
+        if (userUniqueId==null){
+            userUniqueId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
+        }
         initViews();
         if (UsableFunctions.checkLoggedInOrNot()) {
-            try {
-                getChatRoomsFromFirebase(AppController.getInstance().getUser_unique_id());
-            } catch (Exception e) {
-                getChatRoomsFromFirebase("56341");
-            }
+            getChatRoomsFromFirebase(userUniqueId);
         }
         Log.d("lifecheck", "onCreateView: chatfragment ");
         return root;
@@ -91,9 +91,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void getChatRoomsFromFirebase(String myId) {
-        Query query = db.collection("USERS").document(myId)
-                .collection("chatRooms")
-                .orderBy("chatRoomId", Query.Direction.ASCENDING);
+        Query query = db.collection("USERS").document(myId).collection("chatRooms").whereEqualTo("play","n").orderBy("chatRoomId", Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<chatRoom> options=new FirestoreRecyclerOptions.Builder<chatRoom>()
                 .setQuery(query,chatRoom.class).build();
          adapter= new FirestoreRecyclerAdapter<chatRoom, ChatViewHolder>(options) {

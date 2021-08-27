@@ -22,7 +22,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.StorageReference;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.RequestHandler;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -139,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                         profile = user.getPhotoUrl().toString();
                         phone = "0";
                         addDatatoFirebase();
-                        login();
+                        loginMehod();
                     } else {
                         Log.e("TAG", "signInWithCredential:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.",
@@ -159,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
         myDocRef.set(params);
     }
 
-    public void login() {
+    public void loginMehod() {
         class Login extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
@@ -182,7 +181,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(String s) {
-                Log.e("TAG", s);
                 super.onPostExecute(s);
                 if (AppController.getInstance().login(s)) {
                     if (AppController.getInstance().getUnderMain().equalsIgnoreCase("1")) {

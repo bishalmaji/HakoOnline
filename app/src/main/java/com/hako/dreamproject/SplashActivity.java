@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.ads.MobileAds;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.Constant;
 import com.hako.dreamproject.utils.RequestHandler;
@@ -58,20 +57,17 @@ public class SplashActivity extends AppCompatActivity {
             Toast.makeText(this, e.getMessage() + "", Toast.LENGTH_SHORT).show();
         }
         if (!isEmulator()) {
-
             new Handler().postDelayed(() -> {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null && !AppController.getInstance().getId().equalsIgnoreCase("0")) {
-                    email = user.getEmail();
-                    name = user.getDisplayName();
-                    profile = user.getPhotoUrl() + "";
-                    login();
-                } else {
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                } else {
+                    startActivity(new Intent(SplashActivity.this,LoginActivity.class));
+                    finish();
                 }
 
             }, 5000);
@@ -82,55 +78,7 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    public void login() {
-        class Login extends AsyncTask<Void, Void, String> {
-            @Override
-            protected String doInBackground(Void... voids) {
-                RequestHandler requestHandler = new RequestHandler();
-                HashMap<String, String> params = new HashMap<>();
-                params.put("register_or_login", "1");
-                params.put("email", email);
-                params.put("profile", profile);
-                params.put(NAME, name);
-                params.put("refer", "0");
-                Log.e("Constants.TAG", params.toString());
-                return requestHandler.sendPostRequest(BASEURL, params);
-            }
 
-            @Override
-            protected void onPostExecute(String s) {
-                Log.e(Constant.TAG, s);
-                super.onPostExecute(s);
-                if (AppController.getInstance().login(s)) {
-                    if (AppController.getInstance().getUnderMain().equalsIgnoreCase("1")) {
-                        Toast.makeText(getApplicationContext(), "Maintance Mode", Toast.LENGTH_LONG).show();
-                        Intent i = new Intent(SplashActivity.this, Maintance.class);
-                        startActivity(i);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        finish();
-                    } else if (AppController.getInstance().getStatus().equalsIgnoreCase("1") && AppController.getInstance().getUnderMain().equalsIgnoreCase("0")) {
-                        Toast.makeText(getApplicationContext(), "Your Account Was Suspendend", Toast.LENGTH_LONG).show();
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        finish();
-                    } else {
-                        Intent i = new Intent(SplashActivity.this, HomeActivity.class);
-                        startActivity(i);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        finish();
-                    }
-                } else {
-                    Intent i = new Intent(SplashActivity.this, HomeActivity.class);
-                    startActivity(i);
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    finish();
-                }
-
-
-            }
-        }
-        Login ru = new Login();
-        ru.execute();
-    }
 
 //    @Override
 //    public void onWindowFocusChanged(boolean hasFocus) {

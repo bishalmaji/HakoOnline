@@ -28,7 +28,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DreamProject"
         android:usesCleartextTraffic="true">
-        <activity android:name=".EditProfileActivity"></activity>
+        <activity android:name=".EditProfileActivity" />
         <activity
             android:name=".Settings"
             android:exported="true" />

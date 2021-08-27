@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -76,6 +77,8 @@ public class ProfileFragment extends Fragment {
     SplashActivity splashActivity1;
 
 
+
+
     View rootView;
 
     CircleImageView profile;
@@ -107,12 +110,12 @@ public class ProfileFragment extends Fragment {
     ImageView img;
     private RewardFragment rewardFragment1;
     private String nameStr,imageStr;
+    private String myId;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.profile_fragment, container, false);
-
         setViews();
 
         setOnClickAnimation();
@@ -154,9 +157,15 @@ public class ProfileFragment extends Fragment {
                    imageStr= task.getResult().getString("profile");
                     if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
                         name.setText("Login");
+
                     } else {
                         name.setText(nameStr);
-                        tvMyId.setText("ID: " + AppController.getInstance().getUser_unique_id());
+                        myId = AppController.getInstance().getUser_unique_id();
+                        if (myId==null){
+                            myId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
+                        }
+                    tvMyId.setText(myId);
+
                         // for user images
                         Glide.with(getContext()).load(imageStr).into(profile);
                         stats();
@@ -303,7 +312,10 @@ public class ProfileFragment extends Fragment {
 
     private void setInvitationFriend(String friendId, Dialog dialog) {
         String invitationId = UsableFunctions.getInvitationId();
-        String myId = AppController.getInstance().getUser_unique_id();
+        myId = AppController.getInstance().getUser_unique_id();
+        if (myId==null){
+            myId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
+        }
         String chatRoomId = UsableFunctions.getMessageRoomId();
         Log.d(TAG_INVITE_FRIEND, "friendId: " + friendId + " InvitationId: " + invitationId + "myId: " + myId);
 

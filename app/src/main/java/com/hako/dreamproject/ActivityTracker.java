@@ -66,7 +66,11 @@ public class ActivityTracker extends AppCompatActivity {
         close.setOnClickListener(view ->
                 onBackPressed()
         );
-        myPoints.setText(AppController.getInstance().getCoins());
+      String  pointsStr=AppController.getInstance().getCoins();
+        if (pointsStr== null)
+            myPoints.setText(AppController.getInstance().sharedPref.getString("points","0"));
+        else
+            myPoints.setText(AppController.getInstance().getCoins());
         getData();
     }
 

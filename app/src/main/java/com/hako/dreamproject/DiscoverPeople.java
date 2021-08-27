@@ -124,22 +124,40 @@ public class DiscoverPeople extends AppCompatActivity {
 
                 }
 
-
-
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            Glide.with(DiscoverPeople.this).load(profile.get(0)).into(ivr1);
-            Glide.with(DiscoverPeople.this).load(profile.get(1)).into(ivr2);
-            Glide.with(DiscoverPeople.this).load(profile.get(2)).into(ivr3);
-            name1.setText(name.get(0));
-            name2.setText(name.get(1));
-            name3.setText(name.get(2));
-            p1.setText(points.get(0));
-            p2.setText(points.get(1));
-            p3.setText(points.get(2));
-            DiscoverPeopleAdapter adapter = new DiscoverPeopleAdapter(DiscoverPeople.this, user_id, points, userid, name, user_unique_id, profile);
-            discover_recycler.setAdapter(adapter);
+            if (profile.size()>=3){
+                Glide.with(DiscoverPeople.this).load(profile.get(0)).into(ivr1);
+                Glide.with(DiscoverPeople.this).load(profile.get(1)).into(ivr2);
+                Glide.with(DiscoverPeople.this).load(profile.get(2)).into(ivr3);
+                name1.setText(name.get(0));
+                name2.setText(name.get(1));
+                name3.setText(name.get(2));
+                p1.setText(points.get(0));
+                p2.setText(points.get(1));
+                p3.setText(points.get(2));
+                DiscoverPeopleAdapter adapter = new DiscoverPeopleAdapter(DiscoverPeople.this, user_id, points, userid, name, user_unique_id, profile);
+                discover_recycler.setAdapter(adapter);
+            }else if (profile.size()==2){
+                Glide.with(DiscoverPeople.this).load(profile.get(0)).into(ivr1);
+                Glide.with(DiscoverPeople.this).load(profile.get(1)).into(ivr2);
+                name1.setText(name.get(0));
+                name2.setText(name.get(1));
+                p1.setText(points.get(0));
+                p2.setText(points.get(1));
+                DiscoverPeopleAdapter adapter = new DiscoverPeopleAdapter(DiscoverPeople.this, user_id, points, userid, name, user_unique_id, profile);
+                discover_recycler.setAdapter(adapter);
+            }else if (profile.size()==1){
+                Glide.with(DiscoverPeople.this).load(profile.get(0)).into(ivr1);
+                name1.setText(name.get(0));
+                p1.setText(points.get(0));
+                DiscoverPeopleAdapter adapter = new DiscoverPeopleAdapter(DiscoverPeople.this, user_id, points, userid, name, user_unique_id, profile);
+                discover_recycler.setAdapter(adapter);
+            }else {
+                Toast.makeText(DiscoverPeople.this, "No name in the LeaderBoard", Toast.LENGTH_SHORT).show();
+            }
+
 
         }
 

@@ -152,6 +152,9 @@ public class chatActivity extends AppCompatActivity {
 
 
         myId = AppController.getInstance().getUser_unique_id();
+        if (myId==null){
+            myId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
+        }
         myProfileImage = AppController.getInstance().getProfile();
         myName = AppController.getInstance().getName();
 

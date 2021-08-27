@@ -53,6 +53,7 @@ public class RecentFragment extends Fragment {
     FirebaseFirestore db;
     ImageView empty_chat_imgs;
     FirestoreRecyclerAdapter<chatRoom,RecentChatHolder> adapter;
+
     public RecentFragment() {
         // Required empty public constructor
     }
@@ -63,15 +64,14 @@ public class RecentFragment extends Fragment {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_chat, container, false);
 
+        String userUniqueId = AppController.getInstance().getUser_unique_id();
+        if (userUniqueId ==null){
+            userUniqueId =AppController.getInstance().sharedPref.getString("userUniqueId","12345");
+        }
         initViews();
         if (UsableFunctions.checkLoggedInOrNot()) {
-            try {
-                getChatRoomsFromFirebase(AppController.getInstance().getUser_unique_id());
-            } catch (Exception e) {
-                getChatRoomsFromFirebase("56341");
-            }
+            getChatRoomsFromFirebase(userUniqueId);
         }
-
         return root;
     }
 
@@ -93,7 +93,7 @@ public class RecentFragment extends Fragment {
     private void getChatRoomsFromFirebase(String myId) {
         Query query = db.collection("USERS").document(myId)
                 .collection("chatRooms")
-                .orderBy("chatRoomId", Query.Direction.ASCENDING);
+                .whereEqualTo("play","y").orderBy("chatRoomId", Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<chatRoom> options=new FirestoreRecyclerOptions.Builder<chatRoom>()
                 .setQuery(query,chatRoom.class).build();
         adapter= new FirestoreRecyclerAdapter<chatRoom, RecentChatHolder>(options) {

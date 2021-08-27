@@ -81,6 +81,7 @@ import static com.hako.dreamproject.utils.Constant.TRUE;
 import static com.hako.dreamproject.utils.Constant.USERID;
 
 public class MainActivity extends AppCompatActivity {
+    String userid;
     DatabaseReference databaseReference;
     String myUserid;
     String secondUserid;
@@ -270,9 +271,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void addChatRoomInUser(){
+
+        if (AppController.getInstance().getUser_unique_id()==null){
+          userid=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
+        }else {
+            userid =AppController.getInstance().getUser_unique_id();
+        }
         //checking invite
         CollectionReference colRef = FirebaseFirestore.getInstance().collection("INVITATION");
-        colRef.whereEqualTo("receiverId", AppController.getInstance().getUser_unique_id())
+        colRef.whereEqualTo("receiverId", userid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -282,7 +289,6 @@ public class MainActivity extends AppCompatActivity {
                                 if(!invitationList.contains(document.getId())){
                                     invitationList.add(document.getId());
                                     //getting the datas
-                                    String myId = AppController.getInstance().getUser_unique_id();
                                     String myName = AppController.getInstance().getName();
                                     String myProfile = AppController.getInstance().getProfile();
                                     String senderId = (String) document.getData().get("senderId");
@@ -290,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                                     String freindProfileImage = (String) document.getData().get("senderImage");
                                     String chatRoomId = (String) document.getData().get("chatRoomId");
                                     // my room
-                                    DocumentReference docRef = FirebaseFirestore.getInstance().collection("USERS").document(myId)
+                                    DocumentReference docRef = FirebaseFirestore.getInstance().collection("USERS").document(userid)
                                             .collection("chatRooms").document(chatRoomId);
 //
                                     Map<String,Object> myChatRoom=new HashMap<>();
@@ -312,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                                             Map<String,Object> freindChatRoom=new HashMap<>();
                                             myChatRoom.put("chatRoomId",chatRoomId);
                                             myChatRoom.put("myScore","0");
-                                            myChatRoom.put("friendId",myId);
+                                            myChatRoom.put("friendId",userid);
                                             myChatRoom.put("friendName",myName);
                                             myChatRoom.put("friendScore","0");
                                             myChatRoom.put("friendProfile",myProfile);
