@@ -64,7 +64,7 @@ public class RecentFragment extends Fragment {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        String userUniqueId = AppController.getInstance().getUser_unique_id();
+        String userUniqueId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         if (userUniqueId ==null){
             userUniqueId =AppController.getInstance().sharedPref.getString("userUniqueId","12345");
         }

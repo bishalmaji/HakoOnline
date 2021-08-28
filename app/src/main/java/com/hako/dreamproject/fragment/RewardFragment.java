@@ -151,9 +151,9 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         FirebaseUser user = mAuth.getCurrentUser();
         try {
             if (user != null) {
-                userid = AppController.getInstance().getId();
-                token = AppController.getInstance().getToken();
-                points.setText(numberCalculation(Integer.parseInt(AppController.getInstance().getCoins())));
+                userid = AppController.getInstance().sharedPref.getString("suserid","12345");
+                token = AppController.getInstance().sharedPref.getString("stoken","token");
+                points.setText(numberCalculation(Integer.parseInt(AppController.getInstance().sharedPref.getString("spoints","0"))));
 
             } else {
                 userid = "none";
@@ -178,7 +178,7 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
 
         pointsClick = rootView.findViewById(R.id.pointsClick);
         pointsClick.setOnClickListener(view -> {
-            if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+            if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
             } else {

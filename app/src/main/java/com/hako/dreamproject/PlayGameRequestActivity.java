@@ -84,7 +84,7 @@ public class PlayGameRequestActivity extends AppCompatActivity {
         String rotation = getIntent().getStringExtra("rotation");
         String roomId = getIntent().getStringExtra("roomId");
         playerId = getIntent().getStringExtra("playerId");
-        String myId = AppController.getInstance().getUser_unique_id();
+        String myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         String chatRoomId = getIntent().getStringExtra("chatRoomId");
         friendImage = getIntent().getStringExtra("friendURL");
         myName = getIntent().getStringExtra("myName");
@@ -134,7 +134,7 @@ public class PlayGameRequestActivity extends AppCompatActivity {
     private void playGame(String url){
         try{
             Glide.with(this)
-                    .load(AppController.getInstance().getProfile())
+                    .load(AppController.getInstance().sharedPref.getString("sprofile","profile"))
                     .placeholder(R.drawable.profile_holder)
                     .centerCrop()
                     .circleCrop()
@@ -158,7 +158,7 @@ public class PlayGameRequestActivity extends AppCompatActivity {
         Glide.with(this).load(R.drawable.coin_gif).into(imageView);
 
         Glide.with(this)
-                .load(AppController.getInstance().getProfile())
+                .load(AppController.getInstance().sharedPref.getString("sprofile","profile"))
                 .placeholder(R.drawable.profile_holder)
                 .centerCrop()
                 .circleCrop()

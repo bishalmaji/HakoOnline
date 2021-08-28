@@ -59,7 +59,7 @@ public class SplashActivity extends AppCompatActivity {
         if (!isEmulator()) {
             new Handler().postDelayed(() -> {
                 FirebaseUser user = mAuth.getCurrentUser();
-                if (user != null && !AppController.getInstance().getId().equalsIgnoreCase("0")) {
+                if (user != null && !AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

@@ -122,11 +122,11 @@ public class PlayerSearching extends AppCompatActivity {
                 }
                 roomId = "GAMEID_" + gameId + "_NAME_" + gamename + "_ENTRY_" + entryFee;
                 setOnline("1", "1");
-                Glide.with(getApplicationContext()).load(AppController.getInstance().getProfile())
+                Glide.with(getApplicationContext()).load(AppController.getInstance().sharedPref.getString("sprofile","profile"))
                         .placeholder(R.drawable.profile_holder)
                         .error(R.drawable.profile_holder)
                         .into(myPic);
-                myName.setText(AppController.getInstance().getName());
+                myName.setText(AppController.getInstance().sharedPref.getString("sname","name"));
             } catch (JSONException e) {
                 Log.e(ERROR, Objects.requireNonNull(e.getMessage()));
             }
@@ -193,8 +193,8 @@ public class PlayerSearching extends AppCompatActivity {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("set_online_game", API);
-                params.put(TOKEN, AppController.getInstance().getToken());
-                params.put(USERID, AppController.getInstance().getId());
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
                 params.put("id", gameId);
                 params.put("online", online);
                 params.put("played", played);
@@ -232,8 +232,8 @@ public class PlayerSearching extends AppCompatActivity {
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
-                String myID = AppController.getInstance().getUser_unique_id();
-                String token = AppController.getInstance().getToken();
+                String myID = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
+                String token = AppController.getInstance().sharedPref.getString("stoken","token");
                 Log.d(TAG_PLAYER_SEARCHING, "userId: "+ myID + " token: " + token + " roomID: " + roomId);
                 params.put(TOKEN, token);
                 params.put(USERID, myID);
@@ -259,7 +259,7 @@ public class PlayerSearching extends AppCompatActivity {
             player2 = obj.getString("player2");
             newRoomid = obj.getString(ROOMID);
 
-            if(player1.equals(AppController.getInstance().getUser_unique_id())){
+            if(player1.equals(AppController.getInstance().sharedPref.getString("suserUniqueId","useruid"))){
                 url += "&playerid=" + "2&roomid=";
             }else{
                 url += "&playerid=" + "1&roomid=";
@@ -340,8 +340,8 @@ public class PlayerSearching extends AppCompatActivity {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("join", API);
-                params.put(TOKEN, AppController.getInstance().getToken());
-                params.put(USERID, AppController.getInstance().getId());
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
                 params.put("id", id);
                 params.put(ENTRY, entryFee);
                 params.put(NAME, name);
@@ -356,17 +356,17 @@ public class PlayerSearching extends AppCompatActivity {
                 try {
                     JSONObject obj = new JSONObject(s);
                     if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
-                        if (AppController.getInstance().getCoins()==null)
+                        if (AppController.getInstance().sharedPref.getString("spoints","0")==null)
                         coins=  AppController.getInstance().sharedPref.getString("points","0");
                         else
-                            coins= AppController.getInstance().getCoins();
+                            coins= AppController.getInstance().sharedPref.getString("spoints","0");
 
                         int parse = Integer.parseInt(coins) - Integer.parseInt(entryFee);
-                        AppController.getInstance().setCoins(parse + "");
+                        AppController.getInstance().sharedPref.edit().putString("spoints",String.valueOf(parse)).apply();
                         Intent intent;
                         intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.putExtra("playerName", playerNameData);
-                        intent.putExtra("myName", AppController.getInstance().getName());
+                        intent.putExtra("myName", AppController.getInstance().sharedPref.getString("sname","name"));
                         intent.putExtra("playerImg", playerPicData);
                         intent.putExtra(DATA, json.toString());
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -396,8 +396,8 @@ public class PlayerSearching extends AppCompatActivity {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("notfound", API);
-                params.put(TOKEN, AppController.getInstance().getToken());
-                params.put(USERID, AppController.getInstance().getId());
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
                 params.put("s_id", newRoomid);
                 Log.e("helloooooo", params.toString());
                 return requestHandler.sendPostRequest(BASEURL, params);

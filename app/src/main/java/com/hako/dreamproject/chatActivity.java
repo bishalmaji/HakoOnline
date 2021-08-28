@@ -151,12 +151,12 @@ public class chatActivity extends AppCompatActivity {
 
 
 
-        myId = AppController.getInstance().getUser_unique_id();
+        myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         if (myId==null){
             myId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
         }
-        myProfileImage = AppController.getInstance().getProfile();
-        myName = AppController.getInstance().getName();
+        myProfileImage = AppController.getInstance().sharedPref.getString("sprofile","profile");
+        myName = AppController.getInstance().sharedPref.getString("sname","name");
 
         setAudioChat();
         setViews();
@@ -299,8 +299,8 @@ public class chatActivity extends AppCompatActivity {
                         String playerId = "1";
 
                         if(UsableFunctions.checkLoggedInOrNot()){
-                            playerUserName = AppController.getInstance().getName();
-                            playerAvatarUrl = AppController.getInstance().getProfile();
+                            playerUserName = AppController.getInstance().sharedPref.getString("sname","name");
+                            playerAvatarUrl = AppController.getInstance().sharedPref.getString("sprofile","profile");
                         }
 
                         gameModelList.clear();
@@ -566,8 +566,8 @@ public class chatActivity extends AppCompatActivity {
     // handle Game Request
     private void sendGameRequest(String freindId, String url, String rotation, String gameName){
 
-        String playerUserName = playerUserName = AppController.getInstance().getName();
-        String playerAvatarUrl = playerAvatarUrl = AppController.getInstance().getProfile();
+        String playerUserName = playerUserName = AppController.getInstance().sharedPref.getString("sname","name");
+        String playerAvatarUrl = playerAvatarUrl = AppController.getInstance().sharedPref.getString("sprofile","profile");
 
         String roomId = UsableFunctions.getGameRoomId();
         String playerId = "1";

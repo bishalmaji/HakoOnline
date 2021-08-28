@@ -3,7 +3,7 @@
     <string name="opponet">Match opponent</string>
     <string name="searching">Searching..</string>
     <string name="vs">VS</string>
-    <string name="settings_file">settings</string>
+    <string name="spuserdata">spuserdata</string>
     <string name="settings_account_id">account</string>
     <string name="token">token</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -11,4 +11,9 @@
     <string name="send_a_message">Send a message...</string>
     <string name="getCreateEngineSuccess">Engine Created</string>
     <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+
+
+
+
 </resources>

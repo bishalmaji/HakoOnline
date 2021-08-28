@@ -132,13 +132,7 @@ public class HomeFragment extends Fragment {
 
         loading.setVisibility(View.VISIBLE);
         TextView points = rootView.findViewById(R.id.points);
-        pointsStr=AppController.getInstance().getCoins();
-        if (pointsStr== null)
-            points.setText(numberCalculation(Long.parseLong(AppController.getInstance().sharedPref.getString("points","0"))));
-        else
-            points.setText(numberCalculation(Long.parseLong(AppController.getInstance().getCoins())));
-
-
+        points.setText(numberCalculation(Long.parseLong(AppController.getInstance().sharedPref.getString("spoints","0"))));
         points.setOnClickListener(v -> {
             Fragment fragment = new RewardFragment();
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -168,25 +162,13 @@ public class HomeFragment extends Fragment {
             Toast.makeText(getActivity(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
         }
 
-        if (UsableFunctions.checkLoggedInOrNot()) {
-            myDocRef= FirebaseFirestore.getInstance().collection("ProfileData").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            myDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-             @Override
-             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                 if (task.isSuccessful()&&task.getResult()!=null){
-                     if (getActivity()==null){
-                         return;
-                     }
-                     String   imageStr= task.getResult().getString("profile");
-                     Glide.with(getActivity())
-                             .load(imageStr)
-                             .centerCrop()
-                             .circleCrop()
-                             .placeholder(R.drawable.profile_holder)
-                             .into(ivUserProfile);
-                 }
-             }
-         });
+        if (UsableFunctions.checkLoggedInOrNot()){
+            Glide.with(getActivity())
+                    .load(AppController.getInstance().sharedPref.getString("sprofile","profile"))
+                    .centerCrop()
+                    .circleCrop()
+                    .placeholder(R.drawable.profile_holder)
+                    .into(ivUserProfile);
         }
         getPlayerData();
         return rootView;
@@ -227,7 +209,7 @@ public class HomeFragment extends Fragment {
 
         });
         daily.setOnClickListener(view -> {
-            if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+            if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -277,8 +259,8 @@ public class HomeFragment extends Fragment {
                         String playerId = "1";
 
                         if (UsableFunctions.checkLoggedInOrNot()) {
-                            playerUserName = AppController.getInstance().getName();
-                            playerAvatarUrl = AppController.getInstance().getProfile();
+                            playerUserName = AppController.getInstance().sharedPref.getString("sname","name");
+                            playerAvatarUrl = AppController.getInstance().sharedPref.getString("sprofile","profile");
                         }
 
                         populor.clear();
@@ -495,8 +477,8 @@ public class HomeFragment extends Fragment {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("claim_daily", API);
-                params.put(USERID, AppController.getInstance().getId());
-                params.put(TOKEN, AppController.getInstance().getToken());
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
                 return requestHandler.sendPostRequest(BASEURL, params);
             }
 
@@ -613,7 +595,7 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getActivity(), "Select Entry FEE First", Toast.LENGTH_LONG).show();
                 return;
             } else {
-                if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+                if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                     bottomSheetDialog.dismiss();
                     Intent i = new Intent(getActivity(), LoginActivity.class);
                     startActivity(i);
@@ -621,7 +603,7 @@ public class HomeFragment extends Fragment {
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 } else {
                     Log.e("HomeFragment", "val " + id);
-                    int mypoint = Integer.parseInt(AppController.getInstance().getCoins());
+                    int mypoint = Integer.parseInt(AppController.getInstance().sharedPref.getString("spoints","0"));
                     int fee = Integer.parseInt(total + "");
                     if (mypoint >= fee) {
                         JSONObject js = new JSONObject();
@@ -686,7 +668,7 @@ public class HomeFragment extends Fragment {
 
     private void startGame(String id, String names, String image, String url, String rotation) {
         int fee = 20;
-        if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+        if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
             bottomSheetDialog.dismiss();
             Intent i = new Intent(getActivity(), LoginActivity.class);
             startActivity(i);
@@ -695,8 +677,8 @@ public class HomeFragment extends Fragment {
         } else if (id.equals("3") || id.equals("4")) {
             Toast.makeText(getActivity(), "Coming Soon...", Toast.LENGTH_LONG).show();
         } else {
-            AppController.getInstance().setCoins("10000");
-            int mypoint = Integer.parseInt(AppController.getInstance().getCoins());
+//            AppController.getInstance().sharedPref.edit().putString("spoints","10000").apply();
+            int mypoint = Integer.parseInt(AppController.getInstance().sharedPref.getString("spoints","0"));
 //            int fee = Integer.parseInt(total + "");
             if (mypoint >= fee) {
                 JSONObject js = new JSONObject();

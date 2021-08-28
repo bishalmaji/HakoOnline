@@ -98,7 +98,7 @@ public class UsableFunctions {
     }
 
     public static Boolean checkLoggedInOrNot(){
-        if(AppController.getInstance().getId().equalsIgnoreCase("0")){
+        if(AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")){
             return false;
         }else{
             return true;

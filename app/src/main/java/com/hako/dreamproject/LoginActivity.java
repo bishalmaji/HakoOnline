@@ -183,13 +183,13 @@ public class LoginActivity extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 if (AppController.getInstance().login(s)) {
-                    if (AppController.getInstance().getUnderMain().equalsIgnoreCase("1")) {
+                    if (AppController.getInstance().sharedPref.getString("smode","0").equalsIgnoreCase("1")) {
                         Toast.makeText(getApplicationContext(), "Maintance Mode", Toast.LENGTH_LONG).show();
                         Intent i = new Intent(LoginActivity.this, Maintance.class);
                         startActivity(i);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         finish();
-                    } else if (AppController.getInstance().getStatus().equalsIgnoreCase("1") && AppController.getInstance().getUnderMain().equalsIgnoreCase("0")) {
+                    } else if (AppController.getInstance().sharedPref.getString("sstatus","status").equalsIgnoreCase("1") && AppController.getInstance().sharedPref.getString("smode","mode").equalsIgnoreCase("0")) {
                         Toast.makeText(getApplicationContext(), "Your Account Was Suspendend", Toast.LENGTH_LONG).show();
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         finish();

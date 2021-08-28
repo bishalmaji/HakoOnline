@@ -72,7 +72,7 @@ public class CoinMarket extends AppCompatActivity {
         noItem = findViewById(R.id.noitem);
         myorder = findViewById(R.id.myorder);
         myorder.setOnClickListener(view -> {
-            if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+            if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
             } else{

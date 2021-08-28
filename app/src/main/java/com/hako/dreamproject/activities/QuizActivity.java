@@ -326,7 +326,7 @@ public class QuizActivity extends AppCompatActivity {
                     RequestHandler requestHandler = new RequestHandler();
                     HashMap<String, String> params = new HashMap<>();
                     params.put("answer", String.valueOf(id));
-                    params.put("user_id", AppController.getInstance().getUser_unique_id());
+                    params.put("user_id", AppController.getInstance().sharedPref.getString("suserUniqueId","useruid"));
 
                     return requestHandler.sendPostRequest(url, params);
                 }

@@ -66,11 +66,11 @@ public class ActivityTracker extends AppCompatActivity {
         close.setOnClickListener(view ->
                 onBackPressed()
         );
-      String  pointsStr=AppController.getInstance().getCoins();
+      String  pointsStr=AppController.getInstance().sharedPref.getString("spoints","0");
         if (pointsStr== null)
             myPoints.setText(AppController.getInstance().sharedPref.getString("points","0"));
         else
-            myPoints.setText(AppController.getInstance().getCoins());
+            myPoints.setText(AppController.getInstance().sharedPref.getString("spoints","0"));
         getData();
     }
 
@@ -81,8 +81,8 @@ public class ActivityTracker extends AppCompatActivity {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("tracker", API);
-                params.put("userid", AppController.getInstance().getId());
-                params.put("token", AppController.getInstance().getToken());
+                params.put("userid", AppController.getInstance().sharedPref.getString("suserid","1234"));
+                params.put("token", AppController.getInstance().sharedPref.getString("stoken","token"));
                 return requestHandler.sendPostRequest(BASEURL, params);
             }
 

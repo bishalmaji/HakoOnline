@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 currrentPageUrl = extra.getString(GAMEURL);
                 Log.d(TAG_MAIN_ACTIVITY, "url: " + currrentPageUrl);
                 Log.d(TAG_MAIN_ACTIVITY, "chatRoomId: " + chatObject.getString("chatRoomId"));
-                myUserid = AppController.getInstance().getId();
+                myUserid = AppController.getInstance().sharedPref.getString("suserid","12345");
                 gameId = extra.getString(ROOMID);
                 rotation = extra.getString(ROTATION);
                 secondUserid = extra.getString(PlAYER);
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         Glide.with(this).load(R.drawable.coin_gif).into(imageView);
 
         Glide.with(this)
-                .load(AppController.getInstance().getProfile())
+                .load(AppController.getInstance().sharedPref.getString("sprofile","profile"))
                 .placeholder(R.drawable.profile_holder)
                 .centerCrop()
                 .circleCrop()
@@ -272,10 +272,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void addChatRoomInUser(){
 
-        if (AppController.getInstance().getUser_unique_id()==null){
+        if (AppController.getInstance().sharedPref.getString("suserUniqueId","useruid")==null){
           userid=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
         }else {
-            userid =AppController.getInstance().getUser_unique_id();
+            userid =AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         }
         //checking invite
         CollectionReference colRef = FirebaseFirestore.getInstance().collection("INVITATION");
@@ -289,8 +289,8 @@ public class MainActivity extends AppCompatActivity {
                                 if(!invitationList.contains(document.getId())){
                                     invitationList.add(document.getId());
                                     //getting the datas
-                                    String myName = AppController.getInstance().getName();
-                                    String myProfile = AppController.getInstance().getProfile();
+                                    String myName = AppController.getInstance().sharedPref.getString("sname","name");
+                                    String myProfile = AppController.getInstance().sharedPref.getString("sprofile","profile");
                                     String senderId = (String) document.getData().get("senderId");
                                     String freindName = (String) document.getData().get("senderName");
                                     String freindProfileImage = (String) document.getData().get("senderImage");
@@ -452,8 +452,8 @@ public class MainActivity extends AppCompatActivity {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("update_score", API);
-                params.put(TOKEN, AppController.getInstance().getToken());
-                params.put(USERID, AppController.getInstance().getId());
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
                 params.put("s_id", gameId);
                 params.put(SEARCH, points);
                 Log.d(TAG_MAIN_ACTIVITY, "In addSocre doInBackground params: " + params.toString());

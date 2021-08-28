@@ -95,18 +95,18 @@ public class PlayWithFriends extends AppCompatActivity {
            sendWhatsapp("");
         });
 
-        getChatRoomsFromFirebase(AppController.getInstance().getUser_unique_id());
+        getChatRoomsFromFirebase(AppController.getInstance().sharedPref.getString("suserUniqueId","useruid"));
     }
 
     private void setInvitationFriend(String friendId){
         String invitationId = UsableFunctions.getInvitationId();
-        String myId = AppController.getInstance().getUser_unique_id();
+        String myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         String chatRoomId = UsableFunctions.getMessageRoomId();
         Log.d("Play with friends", "friendId: " + friendId + " InvitationId: " + invitationId + "myId: " + myId);
         HashMap<String, String> inviteMap = new HashMap<>();
         inviteMap.put("senderId", myId);
-        inviteMap.put("senderName", AppController.getInstance().getName());
-        inviteMap.put("senderImage", AppController.getInstance().getProfile());
+        inviteMap.put("senderName", AppController.getInstance().sharedPref.getString("sname","name"));
+        inviteMap.put("senderImage", AppController.getInstance().sharedPref.getString("sprofile","profile"));
         inviteMap.put("chatRoomId", chatRoomId);
         inviteMap.put("receiverId", friendId);
 

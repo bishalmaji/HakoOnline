@@ -8,8 +8,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -74,11 +76,12 @@ public class EditProfileActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
     private DocumentReference myDocRef;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+
+
         initViews();
         db= FirebaseFirestore.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -171,6 +174,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                 hasmap.put("profile",uri.toString().trim());
                                 myDocRef.update(hasmap);
                                 Glide.with(EditProfileActivity.this).load(uri.toString().trim()).into(profile_image);
+                                AppController.getInstance().sharedPref.edit().putString("sprofile",uri.toString().trim()).apply();
                                 Toast.makeText(EditProfileActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -223,6 +227,7 @@ public class EditProfileActivity extends AppCompatActivity {
         public void onComplete(@NonNull Task<Void> task) {
             dialog.cancel();
             profile_name.setText(name);
+            AppController.getInstance().sharedPref.edit().putString("sname", name).apply();
         }
     });
     }

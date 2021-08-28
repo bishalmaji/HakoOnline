@@ -79,8 +79,8 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.result_activity);
         myPic = findViewById(R.id.mypic);
-        userId = AppController.getInstance().getId();
-        profile = AppController.getInstance().getProfile();
+        userId = AppController.getInstance().sharedPref.getString("suserid","12345");
+        profile = AppController.getInstance().sharedPref.getString("sprofile","profile");
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         desision = findViewById(R.id.dicision);
@@ -122,7 +122,7 @@ public class ResultActivity extends AppCompatActivity {
                 logo = extra.getString("icon");
                 entryFee = extra.getString(ENTRY);
                 Online user = new Online(FALSE, time + "", score, "paused");
-                databaseReference.child(AppController.getInstance().getId()).setValue(user);
+                databaseReference.child(AppController.getInstance().sharedPref.getString("suserid","12345")).setValue(user);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -190,7 +190,7 @@ public class ResultActivity extends AppCompatActivity {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("final_update", API);
-                params.put(TOKEN, AppController.getInstance().getToken());
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
                 params.put(USERID, userId);
                 params.put("s_id", roomid);
                 params.put(SCORE, score);

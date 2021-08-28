@@ -74,8 +74,8 @@ public class MyOrderActivity extends AppCompatActivity {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("myorder", API);
-                params.put(USERID, AppController.getInstance().getId());
-                params.put(TOKEN, AppController.getInstance().getToken());
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
                 return requestHandler.sendPostRequest(BASEURL, params);
             }
 

@@ -123,9 +123,9 @@ public class HomeActivity extends AppCompatActivity {
             loadFragment(new ProfileFragment());
             me();
         });
-        if(!AppController.getInstance().getId().equalsIgnoreCase("0")){
+        if(!AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")){
            try{
-               if(AppController.getInstance().getUpdate()!=null){
+               if(AppController.getInstance().sharedPref.getString("sverson","verson")!=null){
                    // for update check
                    updateCheck();
                }
@@ -167,7 +167,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setInviteListner(){
         invitationList = new ArrayList<>();
-        myId = AppController.getInstance().getUser_unique_id();
+        myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         if (myId==null){
            myId= AppController.getInstance().sharedPref.getString("userUniqueId","12345");
         }
@@ -199,8 +199,8 @@ public class HomeActivity extends AppCompatActivity {
     }
     private void showInviteDialog(Map<String, Object> data, String invitationId){
         caViewInvitation.setVisibility(View.VISIBLE);
-        String myName = AppController.getInstance().getName();
-        String myProfile = AppController.getInstance().getProfile();
+        String myName = AppController.getInstance().sharedPref.getString("sname","name");
+        String myProfile = AppController.getInstance().sharedPref.getString("sprofile","profile");
         String senderId = (String) data.get("senderId");
         String freindName = (String) data.get("senderName");
         String freindProfileImage = (String) data.get("senderImage");
@@ -300,18 +300,18 @@ public class HomeActivity extends AppCompatActivity {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             int version = pInfo.versionCode;
             String TAG_VERSION = "versionCode";
-            Log.i(TAG_VERSION, "verrsion: " + AppController.getInstance().getUpdate());
+            Log.i(TAG_VERSION, "verrsion: " + AppController.getInstance().sharedPref.getString("sverson","verson"));
 
-            if (Integer.parseInt(AppController.getInstance().getUpdate()) != version) {
+            if (Integer.parseInt(AppController.getInstance().sharedPref.getString("sverson","verson")) != version) {
                 new AlertDialog.Builder(HomeActivity.this, R.style.Theme_AppCompat_Dialog_Alert)
                         .setMessage("Update Available Download our Latest UPDATE")
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                             Intent browserIntent = null;
-                            if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+                            if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                                 browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(UPDATEURL));
                             } else {
-                                browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppController.getInstance().getUpiid()));
+                                browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppController.getInstance().sharedPref.getString("sapk","apk")));
                             }
                             startActivity(browserIntent);
                         })

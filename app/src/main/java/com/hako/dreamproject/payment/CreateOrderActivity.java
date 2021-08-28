@@ -185,7 +185,7 @@ public class CreateOrderActivity extends AppCompatActivity {
 
     private void getToken(String amount) {
         ServiceWrapper serviceWrapper = new ServiceWrapper(null);
-        Call<Token_Res> call = serviceWrapper.getTokenCall("12345", AppController.getInstance().getMidids(), orderIdString, amount);
+        Call<Token_Res> call = serviceWrapper.getTokenCall("12345", AppController.getInstance().sharedPref.getString("smid","mid"), orderIdString, amount);
         call.enqueue(new Callback<Token_Res>() {
             @Override
             public void onResponse(Call<Token_Res> call, Response<Token_Res> response) {
@@ -222,7 +222,7 @@ public class CreateOrderActivity extends AppCompatActivity {
        // String host = "https://securegw.paytm.in/";
         String callBackUrl = host + "theia/paytmCallback?ORDER_ID=" + orderIdString;
         Log.e("TAG", " callback URL " + callBackUrl);
-        PaytmOrder paytmOrder = new PaytmOrder(orderIdString, AppController.getInstance().getMidids(), txnTokenString, amount, callBackUrl);
+        PaytmOrder paytmOrder = new PaytmOrder(orderIdString, AppController.getInstance().sharedPref.getString("smid","mid"), txnTokenString, amount, callBackUrl);
         TransactionManager transactionManager = new TransactionManager(paytmOrder, new PaytmPaymentTransactionCallback() {
             @Override
             public void onTransactionResponse(Bundle bundle) {
@@ -300,8 +300,8 @@ public class CreateOrderActivity extends AppCompatActivity {
                 params.put("create_order", API);
                 params.put("id", id);
                 params.put("player", myids);
-                params.put(USERID, AppController.getInstance().getId());
-                params.put(TOKEN, AppController.getInstance().getToken());
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
                 Log.e(Constant.TAG, params.toString());
                 return requestHandler.sendPostRequest(BASEURL, params);
             }

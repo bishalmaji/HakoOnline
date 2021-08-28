@@ -155,12 +155,12 @@ public class ProfileFragment extends Fragment {
                     }
                     nameStr= task.getResult().getString("name");
                    imageStr= task.getResult().getString("profile");
-                    if (AppController.getInstance().getId().equalsIgnoreCase("0")) {
+                    if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                         name.setText("Login");
 
                     } else {
                         name.setText(nameStr);
-                        myId = AppController.getInstance().getUser_unique_id();
+                        myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
                         if (myId==null){
                             myId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
                         }
@@ -312,7 +312,7 @@ public class ProfileFragment extends Fragment {
 
     private void setInvitationFriend(String friendId, Dialog dialog) {
         String invitationId = UsableFunctions.getInvitationId();
-        myId = AppController.getInstance().getUser_unique_id();
+        myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         if (myId==null){
             myId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
         }
@@ -416,8 +416,8 @@ public class ProfileFragment extends Fragment {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("stats", API);
-                params.put(USERID, AppController.getInstance().getId());
-                params.put(TOKEN, AppController.getInstance().getToken());
+                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
+                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
                 return requestHandler.sendPostRequest(BASEURL, params);
             }
 

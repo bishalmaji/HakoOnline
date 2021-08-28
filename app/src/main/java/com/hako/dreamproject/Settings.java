@@ -139,7 +139,7 @@ public class Settings extends AppCompatActivity {
 
 
         FirebaseStorage storage=FirebaseStorage.getInstance();
-        StorageReference uploader=storage.getReference().child("Profile Picture").child(AppController.getInstance().getUser_unique_id());
+        StorageReference uploader=storage.getReference().child("Profile Picture").child(AppController.getInstance().sharedPref.getString("suserUniqueId","useruid"));
 
         uploader.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override

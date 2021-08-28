@@ -39,8 +39,8 @@ public class PendingRequests extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pending_requests);
 
-        myId = AppController.getInstance().getUser_unique_id();
-        String name =  AppController.getInstance().getName();
+        myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
+        String name =  AppController.getInstance().sharedPref.getString("sname","name");
         Log.e("senderid", myId);
         Log.e("sendernamwe",name);
         //getListItem();

@@ -169,7 +169,7 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        sharedPref = this.getSharedPreferences(getString(R.string.settings_file), Context.MODE_PRIVATE);
+        sharedPref = this.getSharedPreferences(getString(R.string.spuserdata), Context.MODE_PRIVATE);
         this.readData();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -183,8 +183,8 @@ public class AppController extends Application {
 
     }
     public void readData() {
-        this.setId(sharedPref.getString(getString(R.string.settings_account_id), "0"));
-        this.setToken(sharedPref.getString(getString(R.string.token), "0"));
+        this.setId(sharedPref.getString("suserid", "0"));
+        this.setToken(sharedPref.getString("stoken", "0"));
 
     }
     public void logout(AppCompatActivity activity) {
@@ -237,9 +237,18 @@ public class AppController extends Application {
         }
     }
     public void saveData() {
-        sharedPref.edit().putString(getString(R.string.settings_account_id), this.getId()).apply();
-        sharedPref.edit().putString(getString(R.string.token), this.getToken()).apply();
-        sharedPref.edit().putString("userUniqueId",this.getUser_unique_id()).apply();
-        sharedPref.edit().putString("points",this.getCoins()).apply();
+        sharedPref.edit().putString("suserid", this.getId()).apply();
+        sharedPref.edit().putString("stoken", this.getToken()).apply();
+        sharedPref.edit().putString("spoints", this.getCoins()).apply();
+        sharedPref.edit().putString("sstatus", this.getStatus()).apply();
+        sharedPref.edit().putString("sname", this.getName()).apply();
+        sharedPref.edit().putString("sprofile", this.getProfile()).apply();
+        sharedPref.edit().putString("semail", this.getEmail()).apply();//no use
+        sharedPref.edit().putString("srefer", this.getRefer()).apply();//no use
+        sharedPref.edit().putString("sverson", this.getUpdate()).apply();//no use
+        sharedPref.edit().putString("sapk", this.getUpiid()).apply();//np use
+        sharedPref.edit().putString("smode", this.getUnderMain()).apply();//no use
+        sharedPref.edit().putString("smid", this.getMidids()).apply();//no use
+        sharedPref.edit().putString("suserUniqueId",this.getUser_unique_id()).apply();//no use
     }
 }
