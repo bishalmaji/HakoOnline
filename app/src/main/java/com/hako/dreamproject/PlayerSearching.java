@@ -65,7 +65,7 @@ public class PlayerSearching extends AppCompatActivity {
     String player2;
     Handler handler;
     int delay = 3000;
-    int i;
+
     Runnable myRunnable;
     boolean status = false;
     CircleImageView myPic;
@@ -153,7 +153,6 @@ public class PlayerSearching extends AppCompatActivity {
             }
 
             public void onFinish() {
-                flag();
                 imageSearch = false;
                 timeLeft.setText("Plyayer Not Found!");
 //                new AlertDialog.Builder(PlayerSearching.this)
@@ -314,17 +313,16 @@ public class PlayerSearching extends AppCompatActivity {
         }
 
     } catch (Exception e) {
-
             if (!status) {
-                handler = new Handler();
-                myRunnable = PlayerSearching.this::search;
-                handler.postDelayed(myRunnable, delay);
+                    handler = new Handler();
+                    myRunnable = PlayerSearching.this::search;
+                    handler.postDelayed(myRunnable, delay);
             }
             Log.e(ERROR, e.getMessage());
 
 
     }
-    Log.d("after20", "onPostExecute:jlkasldjfaljljsj ");
+
 
 
             }
@@ -432,6 +430,7 @@ public class PlayerSearching extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.e(Constant.TAG, "Distroy");
+        cT.cancel();
         super.onDestroy();
     }
 
