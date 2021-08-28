@@ -179,14 +179,26 @@ public class DiscoverPeople extends AppCompatActivity {
 
         private int findrank() {
           maxindex1=getIndexOfLargest(pointsLong);
-         pointsLong.remove(maxindex1);
-          maxindex2=getIndexOfLargest(pointsLong)+1;
-         pointsLong.remove(maxindex2-1);
-         maxindex3=getIndexOfLargest(pointsLong);
-         if (maxindex1==-1) return 1;
-         else if (maxindex2-1==-1) return 2;
-         else if (maxindex3==-1)return 3;
-         else return 0;
+          if (maxindex1==-1){
+              return 1;
+          }else {
+              pointsLong.remove(maxindex1);
+              maxindex2=getIndexOfLargest(pointsLong)+1;
+              if (maxindex2-1==-1){
+                  return 2;
+              }else {
+                  pointsLong.remove(maxindex2-1);
+                  maxindex3=getIndexOfLargest(pointsLong);
+                  if (maxindex3==-1){
+                      return 3;
+                  }else{
+                      return 0;
+                  }
+              }
+     
+
+          }
+
         }
 
     }

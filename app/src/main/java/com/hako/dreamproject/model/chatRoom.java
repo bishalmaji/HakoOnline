@@ -8,10 +8,11 @@ public class chatRoom {
     private String  friendScore;
     private String friendProfile;
     private String play;
+    private boolean online;
 
     public chatRoom(){ }
 
-    public chatRoom(String chatRoomId, String  myScore, String friendId, String friendName, String  friendScore, String friendProfile, String  play) {
+    public chatRoom(String chatRoomId, String myScore, String friendId, String friendName, String friendScore, String friendProfile, String play, boolean online) {
         this.chatRoomId = chatRoomId;
         this.myScore = myScore;
         this.friendId = friendId;
@@ -20,6 +21,7 @@ public class chatRoom {
         this.friendProfile = friendProfile;
 
         this.play = play;
+        this.online = online;
     }
 
     public String getMyScore() {
@@ -76,5 +78,13 @@ public class chatRoom {
 
     public void setFirstMsg(String  firstMsg) {
         this.play = play;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 }

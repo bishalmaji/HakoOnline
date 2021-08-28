@@ -40,6 +40,7 @@ import com.hako.dreamproject.utils.UsableFunctions;
 import com.hardik.clickshrinkeffect.ClickShrinkEffectKt;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -245,15 +246,16 @@ public class HomeActivity extends AppCompatActivity {
                                    String freindId, String freindName, String freindProfileImage){
         DocumentReference docRef = db.collection("USERS").document(myId)
                 .collection("chatRooms").document(chatRoomId);
-        chatRoom myChatRoom = new chatRoom(chatRoomId, "0", freindId, freindName, "0", freindProfileImage, "n");
+        chatRoom myChatRoom = new chatRoom(chatRoomId, "0", freindId, freindName, "0", freindProfileImage, "n", true);
         docRef.set(myChatRoom);
 
         // Freind room
         DocumentReference freindRef = db.collection("USERS").document(freindId)
                 .collection("chatRooms").document(chatRoomId);
-        chatRoom freindChatRoom = new chatRoom(chatRoomId, "0", myId, myName, "0", myProfile, "n");
+        chatRoom freindChatRoom = new chatRoom(chatRoomId, "0", myId, myName, "0", myProfile, "n", false);
         freindRef.set(freindChatRoom);
     }
+
     private void deleteInvitationRequest(String invitationId){
         DocumentReference docRef = db.collection("INVITATION").document(invitationId);
         docRef.delete();
@@ -323,6 +325,20 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Map<String,Boolean> data=new HashMap<>();
+        data.put("online",true);
+        db.collection("USERS").document(myId).set(data);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.collection("USERS").document(myId).update("online",false);
+    }
 //    @Override
 //    public void onWindowFocusChanged(boolean hasFocus) {
 //        super.onWindowFocusChanged(hasFocus);

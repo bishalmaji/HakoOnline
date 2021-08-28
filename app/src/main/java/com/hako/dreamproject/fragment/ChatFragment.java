@@ -1,16 +1,14 @@
 package com.hako.dreamproject.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +21,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.hako.dreamproject.R;
-import com.hako.dreamproject.adapters.chat.GroupChatAdapter;
 import com.hako.dreamproject.chatActivity;
 import com.hako.dreamproject.model.chatRoom;
 import com.hako.dreamproject.utils.AppController;
@@ -37,7 +32,6 @@ import com.hako.dreamproject.utils.UsableFunctions;
 import com.hardik.clickshrinkeffect.ClickShrinkEffectKt;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 
@@ -56,6 +50,12 @@ public class ChatFragment extends Fragment {
     String TAG_CHAT_FRAGMENT = "chatFragment";
     FirestoreRecyclerAdapter<chatRoom,ChatViewHolder> adapter;
     String userUniqueId;
+
+    //for online status
+    ArrayList<String > statarray;
+    int i=0;
+    boolean stat;
+
     public ChatFragment() {
         // Required empty public constructor
     }
@@ -65,6 +65,7 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_chat, container, false);
+        statarray=new ArrayList<>();
         userUniqueId = AppController.getInstance().getUser_unique_id();
         if (userUniqueId==null){
             userUniqueId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
@@ -73,7 +74,7 @@ public class ChatFragment extends Fragment {
         if (UsableFunctions.checkLoggedInOrNot()) {
             getChatRoomsFromFirebase(userUniqueId);
         }
-        Log.d("lifecheck", "onCreateView: chatfragment ");
+
         return root;
     }
 
@@ -91,7 +92,8 @@ public class ChatFragment extends Fragment {
     }
 
     private void getChatRoomsFromFirebase(String myId) {
-        Query query = db.collection("USERS").document(myId).collection("chatRooms").orderBy("chatRoomId", Query.Direction.ASCENDING);
+        Query query = db.collection("USERS").document(myId).collection("chatRooms")
+                .orderBy("chatRoomId", Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<chatRoom> options=new FirestoreRecyclerOptions.Builder<chatRoom>()
                 .setQuery(query,chatRoom.class).build();
          adapter= new FirestoreRecyclerAdapter<chatRoom, ChatViewHolder>(options) {
@@ -102,9 +104,21 @@ public class ChatFragment extends Fragment {
                 return new ChatViewHolder(holder);
             }
 
-            @Override
+             @Override
+             public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+                 super.onAttachedToRecyclerView(recyclerView);
+                AddOnlineStatusFunction();
+
+             }
+
+             @Override
             protected void onBindViewHolder(@NonNull ChatViewHolder holder, int position, @NonNull chatRoom model) {
+                statarray.add(model.getFriendId());
                 Glide.with(getContext()).load(model.getFriendProfile()).circleCrop().into(holder.ivGroupChatImage);
+                if (model.isOnline()){
+                    holder.ivStatus.setVisibility(View.VISIBLE);
+                }
+
                 holder.tvChatTitle.setText(model.getFriendName());
                 holder.itemView.setOnClickListener( view -> {
                     Intent intent = new Intent(getActivity(), chatActivity.class);
@@ -121,6 +135,32 @@ public class ChatFragment extends Fragment {
             }
         };
          setUpRecyclerView();
+    }
+
+    private void AddOnlineStatusFunction() {
+        class AddOnlineStatus extends AsyncTask<String, String, Boolean> {
+            @Override
+            protected Boolean doInBackground(String... strings) {
+                db.collection("USERS").document(statarray.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        stat= task.getResult().getBoolean("online");
+                    }
+                });
+                return stat;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean b) {
+                adapter.getItem(i).setOnline(b);
+                adapter.notifyItemChanged(i);
+                if (statarray.size()>i){
+                    i++;
+                    AddOnlineStatusFunction();
+                }
+                super.onPostExecute(b);
+            }
+        }
     }
 
     private void setUpRecyclerView() {

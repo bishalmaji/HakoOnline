@@ -153,6 +153,7 @@ public class PlayerSearching extends AppCompatActivity {
             }
 
             public void onFinish() {
+                flag();
                 imageSearch = false;
                 timeLeft.setText("Plyayer Not Found!");
 //                new AlertDialog.Builder(PlayerSearching.this)
@@ -245,78 +246,87 @@ public class PlayerSearching extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(String s) {
+
                 super.onPostExecute(s);
+                int a=1;
+
+    try {
+        Log.e("gotit", "here - "+s);
+        JSONObject obj = new JSONObject(s);
+        Log.d(TAG_PLAYER_SEARCHING, " res: " + obj);
+        if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
+            String player1 = obj.getString("player1");
+            player2 = obj.getString("player2");
+            newRoomid = obj.getString(ROOMID);
+
+            if(player1.equals(AppController.getInstance().getUser_unique_id())){
+                url += "&playerid=" + "2&roomid=";
+            }else{
+                url += "&playerid=" + "1&roomid=";
+            }
+
+            Log.d(TAG_PLAYER_SEARCHING, "chatRoomId: " + obj.getJSONObject("chatData").getString("chatRoomId"));
+            Log.d(TAG_PLAYER_SEARCHING, "chatRoomId: " + obj.toString());
+
+            playerNameData = obj.getString(NAME);
+            playerPicData = obj.getString(PIC);
+            loading = false;
+            Glide.with(getApplicationContext()).load(playerPicData)
+                    .placeholder(R.drawable.profile_holder)
+                    .error(R.drawable.profile_holder)
+                    .into(playerPic);
+            playerName.setText(playerNameData);
+            playerName.setVisibility(View.VISIBLE);
+            handler = new Handler();
+            myRunnable = () -> {
                 try {
-                    Log.e("gotit", "here - "+s);
-                    JSONObject obj = new JSONObject(s);
-                    Log.d(TAG_PLAYER_SEARCHING, " res: " + obj);
-                    if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
-                        String player1 = obj.getString("player1");
-                        player2 = obj.getString("player2");
-                        newRoomid = obj.getString(ROOMID);
-
-                        if(player1.equals(AppController.getInstance().getUser_unique_id())){
-                            url += "&playerid=" + "2&roomid=";
-                        }else{
-                            url += "&playerid=" + "1&roomid=";
-                        }
-
-                        Log.d(TAG_PLAYER_SEARCHING, "chatRoomId: " + obj.getJSONObject("chatData").getString("chatRoomId"));
-                        Log.d(TAG_PLAYER_SEARCHING, "chatRoomId: " + obj.toString());
-
-                        playerNameData = obj.getString(NAME);
-                        playerPicData = obj.getString(PIC);
-                        loading = false;
-                        Glide.with(getApplicationContext()).load(playerPicData)
-                                .placeholder(R.drawable.profile_holder)
-                                .error(R.drawable.profile_holder)
-                                .into(playerPic);
-                        playerName.setText(playerNameData);
-                        playerName.setVisibility(View.VISIBLE);
-                        handler = new Handler();
-                        myRunnable = () -> {
-                            try {
-                                json.put(PlAYER, player2);
-                                json.put(NAME, playerNameData);
-                                json.put(PIC, playerPicData);
-                                json.put(GAMEURL, url + newRoomid);
-                                json.put("gname", gamename);
-                                json.put(GAMEICON, icon);
-                                json.put(ENTRY, entryFee);
-                                json.put(ROOMID, newRoomid);
-                                json.put(ROTATION, rotation);
-                                json.put("Data", obj.getJSONObject("chatData"));
-                                join(gameId, entryFee, gamename);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        };
-                        handler.postDelayed(myRunnable, 3000);
-                    } else {
-                        if (!status) {
-                            if(imageSearch){
-                                playerPic.setImageResource(intArray[count]);
-                                count+=1;
-                                if(count > 11){
-                                    count = 0;
-                                }
-                            }
-
-                            search();
-                        }else
-                        if (obj.getInt(ROOMID) > 0) {
-                            newRoomid = obj.getString(ROOMID);
-                        }
-                    }
-
-                } catch (Exception e) {
-                    if (!status) {
-                        handler = new Handler();
-                        myRunnable = PlayerSearching.this::search;
-                        handler.postDelayed(myRunnable, delay);
-                    }
-                    Log.e(ERROR, e.getMessage());
+                    json.put(PlAYER, player2);
+                    json.put(NAME, playerNameData);
+                    json.put(PIC, playerPicData);
+                    json.put(GAMEURL, url + newRoomid);
+                    json.put("gname", gamename);
+                    json.put(GAMEICON, icon);
+                    json.put(ENTRY, entryFee);
+                    json.put(ROOMID, newRoomid);
+                    json.put(ROTATION, rotation);
+                    json.put("Data", obj.getJSONObject("chatData"));
+                    join(gameId, entryFee, gamename);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+            };
+            handler.postDelayed(myRunnable, 3000);
+        } else {
+            if (!status) {
+                if(imageSearch){
+                    playerPic.setImageResource(intArray[count]);
+                    count+=1;
+                    if(count > 11){
+                        count = 0;
+                    }
+                }
+
+                search();
+            }else
+            if (obj.getInt(ROOMID) > 0) {
+                newRoomid = obj.getString(ROOMID);
+            }
+        }
+
+    } catch (Exception e) {
+
+            if (!status) {
+                handler = new Handler();
+                myRunnable = PlayerSearching.this::search;
+                handler.postDelayed(myRunnable, delay);
+            }
+            Log.e(ERROR, e.getMessage());
+
+
+    }
+    Log.d("after20", "onPostExecute:jlkasldjfaljljsj ");
+
+
             }
         }
         Login ru = new Login();
@@ -389,13 +399,13 @@ public class PlayerSearching extends AppCompatActivity {
                 params.put(TOKEN, AppController.getInstance().getToken());
                 params.put(USERID, AppController.getInstance().getId());
                 params.put("s_id", newRoomid);
-                Log.e(Constant.TAG, params.toString());
+                Log.e("helloooooo", params.toString());
                 return requestHandler.sendPostRequest(BASEURL, params);
             }
 
             @Override
             protected void onPostExecute(String s) {
-                Log.e(Constant.TAG, s);
+                Log.e("helloooooo", s);
                 super.onPostExecute(s);
             }
         }

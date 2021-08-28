@@ -181,10 +181,10 @@ public class MainActivity extends AppCompatActivity {
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
                 webView.loadUrl(currrentPageUrl);
-                //ChromeClient webViewClient = new ChromeClient(this);
-               // webView.setWebChromeClient(webViewClient);
-                WebViewClientImpl webViewClients = new WebViewClientImpl(this);
-                webView.setWebViewClient(webViewClients);
+                ChromeClient webViewClient = new ChromeClient(this);
+                webView.setWebChromeClient(webViewClient);
+//                WebViewClientImpl webViewClients = new WebViewClientImpl(this);
+//                webView.setWebViewClient(webViewClients);
             }
             catch (Exception e){
                 Log.e(TAG_MAIN_ACTIVITY, "In Extras != null msg: " + e.getMessage());
@@ -298,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
                                     // my room
                                     DocumentReference docRef = FirebaseFirestore.getInstance().collection("USERS").document(userid)
                                             .collection("chatRooms").document(chatRoomId);
-//
                                     Map<String,Object> myChatRoom=new HashMap<>();
                                     myChatRoom.put("chatRoomId",chatRoomId);
                                     myChatRoom.put("myScore","0");
@@ -307,14 +306,14 @@ public class MainActivity extends AppCompatActivity {
                                     myChatRoom.put("friendScore","0");
                                     myChatRoom.put("friendProfile",freindProfileImage);
                                     myChatRoom.put("play","y");
+                                    myChatRoom.put("online",true);
 
                                     docRef.set(myChatRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            // Freind room
+                                                 // Freind room
                                             DocumentReference freindRef = FirebaseFirestore.getInstance().collection("USERS").document(senderId)
                                                     .collection("chatRooms").document(chatRoomId);
-
                                             Map<String,Object> freindChatRoom=new HashMap<>();
                                             myChatRoom.put("chatRoomId",chatRoomId);
                                             myChatRoom.put("myScore","0");
@@ -323,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
                                             myChatRoom.put("friendScore","0");
                                             myChatRoom.put("friendProfile",myProfile);
                                             myChatRoom.put("play","y");
+                                            myChatRoom.put("online",false);
                                             freindRef.set(freindChatRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
