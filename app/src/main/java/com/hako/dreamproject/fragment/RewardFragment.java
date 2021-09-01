@@ -1,6 +1,7 @@
 package com.hako.dreamproject.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -31,15 +32,23 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.rewarded.RewardItem;
+import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.hako.dreamproject.ActivityTracker;
 import com.hako.dreamproject.CoinMarket;
+import com.hako.dreamproject.HomeActivity;
 import com.hako.dreamproject.LoginActivity;
+import com.hako.dreamproject.MainActivity;
 import com.hako.dreamproject.R;
 import com.hako.dreamproject.model.checkModel;
 import com.hako.dreamproject.utils.AppController;
@@ -59,6 +68,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -76,7 +86,7 @@ import static com.hako.dreamproject.utils.Constant.TAG;
 import static com.hako.dreamproject.utils.Constant.TOKEN;
 import static com.hako.dreamproject.utils.Constant.USERID;
 
-public class RewardFragment extends Fragment implements OnUserEarnedRewardListener {
+public class RewardFragment extends Fragment  {
     View rootView;
     List<checkModel> checkModelList = new ArrayList<>();
     CheckAdapter checkAdapter;
@@ -84,9 +94,10 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
     SwipeRefreshLayout swipetoRefresh;
 
     LinearLayout loading;
-    LinearLayout noItem;
+    TextView noItem;
     NestedScrollView scrollView;
     FirebaseAuth mAuth;
+    FirebaseFirestore dbfirebase;
     String userid;
     String token;
     TextView claim;
@@ -106,7 +117,7 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
     Date current, previous;
     SimpleDateFormat sdf;
     TextView reward;
-    private RewardedInterstitialAd rewardedInterstitialAd;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -118,8 +129,8 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         reward = rootView.findViewById(R.id.reward);
         scrollView = rootView.findViewById(R.id.scrollview);
         claim = rootView.findViewById(R.id.claim);
-            play3ads = rootView.findViewById(R.id.playThreeads);
-            play1ads = rootView.findViewById(R.id.playoneads);
+        play3ads = rootView.findViewById(R.id.playThreeads);
+        play1ads = rootView.findViewById(R.id.playoneads);
         fiftenMinutes = rootView.findViewById(R.id.playfifteen);
         hfour = rootView.findViewById(R.id.hfour);
         hone = rootView.findViewById(R.id.hone);
@@ -127,29 +138,26 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         hthree = rootView.findViewById(R.id.hthree);
         htwo = rootView.findViewById(R.id.htwo);
         totalComplete = rootView.findViewById(R.id.totalComplete);
-
-
+        pointsClick = rootView.findViewById(R.id.pointsClick);
         scrollView.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
+        MobileAds.initialize(getActivity());
+        loadAds();
         swipetoRefresh.setOnRefreshListener(() -> {
             swipetoRefresh.setRefreshing(true);
             getPlayerData();
         });
 
-
-        MobileAds.initialize(getActivity());
-
         reward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadAds();
+                ShowRewardedAdd();
             }
         });
-
-
         mAuth = FirebaseAuth.getInstance();
+        dbfirebase=FirebaseFirestore.getInstance();
+
         FirebaseUser user = mAuth.getCurrentUser();
-        try {
             if (user != null) {
                 userid = AppController.getInstance().sharedPref.getString("suserid","12345");
                 token = AppController.getInstance().sharedPref.getString("stoken","token");
@@ -161,9 +169,7 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
                 points.setText("0");
                 claim.setEnabled(false);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
         Timer timer = new Timer();
         TimerTask t = new TimerTask() {
@@ -176,7 +182,7 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         };
         timer.schedule(t, 0l, 1000 * 60 * 60 * 24);
 
-        pointsClick = rootView.findViewById(R.id.pointsClick);
+
         pointsClick.setOnClickListener(view -> {
             if (AppController.getInstance().sharedPref.getString("suserid","12345").equalsIgnoreCase("0")) {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
@@ -186,8 +192,6 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
                 startActivity(intent);
             }
         });
-
-
         try {
             sdf = new SimpleDateFormat("dd/MM/yyyy");
             Calendar c = Calendar.getInstance();
@@ -217,39 +221,36 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
             e.printStackTrace();
             Toast.makeText(getActivity(), e.getMessage() + " Error", Toast.LENGTH_SHORT).show();
         }
-
-
         claim.setOnClickListener(view -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Toast.makeText(getActivity(), sdf.format(new Date()) + " ", Toast.LENGTH_SHORT).show();
 
-//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//            Toast.makeText(getActivity(), sdf.format(new Date()) + " ", Toast.LENGTH_SHORT).show();
-//
-//
-//            if (getCDate() == null) {
-//                insertData(sdf.format(new Date()));
-//                Toast.makeText(getActivity(), sdf.format(new Date()) + " ", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(getActivity(), getCDate() + " ", Toast.LENGTH_SHORT).show();
-//                Date date = new Date();
-//                try {
-//                    date = sdf.parse(getCDate());
-//
-//                    if (date.before(new Date())) {
-//
-//                        claim.setEnabled(true);
-//
-//                    } else {
-//                        claim.setEnabled(false);
-//                    }
-//
-//
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                    Toast.makeText(getActivity(), e.getMessage() + ".", Toast.LENGTH_SHORT).show();
-//                }
-//
-//
-//            }
+
+            if (getCDate() == null) {
+                insertData(sdf.format(new Date()));
+                Toast.makeText(getActivity(), sdf.format(new Date()) + " ", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), getCDate() + " ", Toast.LENGTH_SHORT).show();
+                Date date = new Date();
+                try {
+                    date = sdf.parse(getCDate());
+
+                    if (date.before(new Date())) {
+
+                        claim.setEnabled(true);
+
+                    } else {
+                        claim.setEnabled(false);
+                    }
+
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), e.getMessage() + ".", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
             int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             if (flag == 1) {
                 flag = 0;
@@ -263,12 +264,10 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         getPlayerData();
         mylay();
 
-
-
         play1ads.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadAds();
+                ShowRewardedAdd();
             }
         });
         /*play1ads.setOnClickListener(view -> {
@@ -282,25 +281,26 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         play3ads.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadAds();
+                ShowRewardedAdd();
+//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ShowRewardedAdd();
+//                        Toast.makeText(getContext(), "second", Toast.LENGTH_SHORT).show();
+//                    }
+//                }, 7000);
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-                        loadAds();
-
-                        //Do something here
+                        ShowRewardedAdd();
                     }
-                }, 7000);
-
+                }, 10000);
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-                        loadAds();
-                        //Do something here
+                        ShowRewardedAdd();
                     }
-                }, 14000);
+                }, 20000);
             }
         });
 
@@ -312,38 +312,47 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         return rootView;
     }
 
+    public RewardedInterstitialAd rewardedInterstitialAd;
     private void loadAds() {
-        RewardedInterstitialAd.load(getActivity(), "ca-app-pub-3940256099942544/5354046379",
+        RewardedInterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/5354046379",
                 new AdRequest.Builder().build(), new RewardedInterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(RewardedInterstitialAd ad) {
                         super.onAdLoaded(ad);
-                        Log.e(TAG, "onAdLoaded");
-                        ad.show(getActivity(), RewardFragment.this::onUserEarnedReward);
-                        //     Toast.makeText(getActivity(), ad.getResponseInfo() + "", Toast.LENGTH_SHORT).show();
+                        rewardedInterstitialAd=ad;
                     }
-
                     @Override
                     public void onAdFailedToLoad(LoadAdError loadAdError) {
                         super.onAdFailedToLoad(loadAdError);
-                        Log.e(TAG, "onAdFailedToLoad");
-                        Log.e("adddss", " adss loading failed");
+                        MobileAds.initialize(getActivity());
+                        loadAds();
                     }
                 });
     }
+    public void ShowRewardedAdd(){
+        if (rewardedInterstitialAd!=null){
+            rewardedInterstitialAd.show(getActivity(), new OnUserEarnedRewardListener() {
+                @Override
+                public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                    goForDaily();
+                    Toast.makeText(getActivity(), "Reward Added To Wallet", Toast.LENGTH_SHORT).show();
+                    MobileAds.initialize(getActivity());
+                    loadAds();
+                }
+            });
 
-    @Override
-    public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-        goForDaily();
-        Toast.makeText(getActivity(), "Reward Added To Wallet", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(getContext(), "Add is not Loaded yet, Try Again", Toast.LENGTH_SHORT).show();
+
+        }
     }
+
 
 
     SQLiteDatabase db;
 
     void insertData(String currentDate) {
         Cursor c = null;
-
         db = getActivity().openOrCreateDatabase("UserData", MODE_PRIVATE, null);
         String sql = "create table if not exists userdata (currentDate text);";
         db.execSQL(sql);
@@ -368,7 +377,6 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         return i;
     }
 
-
     @SuppressLint("DefaultLocale")
     private String numberCalculation(long number) {
         if (number < 1000)
@@ -383,8 +391,10 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
         fragmentTransaction.replace(R.id.fragment, fragment);
         fragmentTransaction.commit(); // save the changes
     }
+//get and update data
 
     public void getPlayerData() {
+        AppController.getInstance().sharedPref.getString("spoints","1000");
         class Bnner extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
@@ -516,14 +526,30 @@ public class RewardFragment extends Fragment implements OnUserEarnedRewardListen
     }
 
     public void goForDaily() {
+        //add points to firebase and sp
+        dbfirebase.collection("ProfileData").document(mAuth.getCurrentUser().getUid())
+                .update("points", FieldValue.increment(100)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+               if (task.isSuccessful()){
+               int point= Integer.parseInt(AppController.getInstance().sharedPref.getString("spoints","500"));
+               int newpoint=point+100;
+               AppController.getInstance().sharedPref.edit().putString("spoints",String.valueOf(newpoint)).apply();
+                   points.setText(numberCalculation(Integer.parseInt(AppController.getInstance().sharedPref.getString("spoints","0")))
+                   );
+               }
+            }
+        });
+
         class Bnner extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
-                params.put("claim_daily", API);
+                params.put("altermoney", API);
                 params.put("userid", userid);
                 params.put("token", token);
+                params.put("name","Bishal Maji");
                 params.put("points", "100");
                 params.put("op", "1");
                 return requestHandler.sendPostRequest(BASEURL, params);

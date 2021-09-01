@@ -17,7 +17,6 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,13 +36,13 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.core.OrderBy;
 import com.hako.dreamproject.adapters.chat.MessagesAdapter;
 import com.hako.dreamproject.adapters.chat.chatGameAdapter;
 import com.hako.dreamproject.audiochat.QuickStartActivity;
 import com.hako.dreamproject.model.GameModel;
 import com.hako.dreamproject.model.GameRequest;
 import com.hako.dreamproject.model.Message;
+import com.hako.dreamproject.model.chatRoom;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.RequestHandler;
 import com.hako.dreamproject.utils.UsableFunctions;
@@ -59,20 +58,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 
 import static com.hako.dreamproject.utils.Constant.API;
 import static com.hako.dreamproject.utils.Constant.BASEURL;
-import static com.hako.dreamproject.utils.Constant.DATA;
 import static com.hako.dreamproject.utils.Constant.ERROR;
 import static com.hako.dreamproject.utils.Constant.FALSE;
 import static com.hako.dreamproject.utils.Constant.GAMELIST;
-import static com.hako.dreamproject.utils.Constant.IMAGE;
-import static com.hako.dreamproject.utils.Constant.NAME;
-import static com.hako.dreamproject.utils.Constant.ROTATION;
 
 public class chatActivity extends AppCompatActivity {
 
@@ -134,7 +128,8 @@ public class chatActivity extends AppCompatActivity {
     int count = 0;
 
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
-
+    private String lastMessage="Say Hello !!";
+     private  boolean isChatRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,8 +143,8 @@ public class chatActivity extends AppCompatActivity {
         freindProfileImage = getIntent().getStringExtra("freindProfile");
         freindName = getIntent().getStringExtra("freindName");
         friendScore = getIntent().getStringExtra("freindScore");
-
-
+        isChatRoom=getIntent().getBooleanExtra("chatRoom",false);
+        db = FirebaseFirestore.getInstance();
 
         myId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
         if (myId==null){
@@ -169,6 +164,7 @@ public class chatActivity extends AppCompatActivity {
         setRequestListner();
 
     }
+
 
     private void setAudioChat() {
         String roomId = myId + reciverId;
@@ -228,7 +224,7 @@ public class chatActivity extends AppCompatActivity {
                 .fromRootView(findViewById(R.id.cL_chatActivity_rootView)).build(etMessage);
 
         // Firebase
-        db = FirebaseFirestore.getInstance();
+
     }
     private void setOnClickListners(){
         ivBack.setOnClickListener( view -> {
@@ -513,15 +509,14 @@ public class chatActivity extends AppCompatActivity {
 
     // age
     private void handleSendMessage(String message, String msgRoomId){
-
         if(!message.isEmpty() && message != ""){
             String msgId = UsableFunctions.getMessageId();
             Message messageObj = new Message(message, msgId, reciverId, myId);
             messagesAdapter.addMessage(messageObj);
             etMessage.setText("");
             rvMessages.scrollToPosition(messagesAdapter.getItemCount() - 1);
-
             sendMessage(msgRoomId, messageObj);
+
         }
     }
     private void sendMessage(String msgRoomId, Message messageObj){
@@ -533,8 +528,9 @@ public class chatActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Log.d(TAG_CHAT_ACTIVITY, "message sends");
-                    }
+                        lastMessage=messageObj.getMessage();
+
+                        }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -542,6 +538,23 @@ public class chatActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        if (isChatRoom){
+            updateChatRoom();
+        }
+        super.onDestroy();
+
+    }
+
+    private void updateChatRoom() {
+     db.collection("USERS").document(myId)
+                .collection("chatRooms").document(messageRoomId).update("lastMsg",lastMessage);
+        db.collection("USERS").document(reciverId)
+                .collection("chatRooms").document(messageRoomId).update("lastMsg",lastMessage);
+    }
+
     //HandleShowEmoji
     private void handleShowEmoji(){
         Emoji = Emoji == true ? false : true;

@@ -1,46 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:gravity="left"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_weight="1.5"
-            android:fontFamily="sans-serif-condensed-medium"
-            android:text="+HAKO Points"
-            android:textColor="@color/primary"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-
-    <LinearLayout
+    <TextView
         android:id="@+id/noitem"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/calibri"
+        android:text="Try Again"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/calibri"
-            android:text="Try Again" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dimen_60dp"
+        android:background="@drawable/bg_action_bar"
+        android:fontFamily="@font/mrsmonsterexpandital"
+        android:gravity="center_horizontal"
+        android:paddingTop="8dp"
+        android:text="+HAKO Points"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/loading"
@@ -69,8 +59,11 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/pulltorefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible">
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView11">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollview"
@@ -109,7 +102,6 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/calibri"
                         android:gravity="center"
-                        android:text="100"
                         android:textColor="@color/primary"
                         android:textSize="40dp" />
                 </LinearLayout>
@@ -125,13 +117,13 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_margin="5dp"
                         android:orientation="vertical">
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rvcheckin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
                             android:layout_marginTop="10dp"
                             android:orientation="horizontal"
                             android:padding="10dp"
@@ -163,44 +155,33 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="68dp"
                     android:layout_marginTop="5dp"
-                    android:visibility="gone"
                     android:layout_marginRight="68dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/line"
                     android:backgroundTint="@color/blue_00ade6"
                     android:fontFamily="@font/calibri"
                     android:gravity="center"
-
                     android:paddingStart="16dp"
+
                     android:paddingTop="15dp"
                     android:paddingEnd="16dp"
                     android:paddingBottom="15dp"
                     android:text="Watch Video And Get Reward"
                     android:textColor="@color/white"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_baseline_fact_check_24" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:fontFamily="@font/calibrib"
-                        android:text="Daily Task"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/dimen_20dp"
+                    android:layout_marginEnd="@dimen/dimen_20dp"
+                    android:fontFamily="@font/calibrib"
+                    android:text="Daily Task"
+                    android:textColor="@color/primary"
+                    android:textSize="16sp"
+                    app:drawableStartCompat="@drawable/ic_baseline_fact_check_24" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -364,28 +345,17 @@
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_baseline_view_module_24" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:fontFamily="@font/calibrib"
-                        android:text="play more to earn more"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/dimen_20dp"
+                    android:layout_marginEnd="@dimen/dimen_20dp"
+                    android:fontFamily="@font/calibrib"
+                    android:text="play more to earn more"
+                    android:textColor="@color/primary"
+                    android:textSize="16sp"
+                    app:drawableStartCompat="@drawable/ic_baseline_view_module_24" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -393,97 +363,73 @@
                     android:layout_margin="16dp"
                     app:cardCornerRadius="5dp">
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/textView14"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/calibrib"
+                            android:text="Play 100 Games"
+                            android:textColor="@color/primary"
+                            app:layout_constraintStart_toEndOf="@+id/imageView2"
+                            app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
+                        <TextView
+                            android:id="@+id/totalComplete"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:fontFamily="@font/calibri"
+                            android:text="Completed 0/100"
+                            android:textSize="11sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                            app:layout_constraintStart_toStartOf="@+id/textView14" />
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:padding="5dp"
+                            android:src="@drawable/hundred"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/mega"
+                            android:fontFamily="@font/calibri"
+                            android:gravity="center"
+                            android:paddingStart="10sp"
+                            android:paddingTop="1dp"
+                            android:paddingEnd="10sp"
+                            android:paddingBottom="1dp"
+                            android:text="Play"
+                            android:textSize="11sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
                             android:orientation="horizontal"
-                            android:weightSum="2">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.5">
-
-                                <ImageView
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:padding="5dp"
-                                    android:src="@drawable/hundred" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginStart="10dp"
-                                    android:gravity="center_vertical"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/calibrib"
-                                        android:text="Play 100 Games"
-                                        android:textColor="@color/primary" />
-
-                                    <TextView
-                                        android:id="@+id/totalComplete"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="5dp"
-                                        android:fontFamily="@font/calibri"
-                                        android:text="Completed 0/100"
-                                        android:textSize="11sp" />
-                                </LinearLayout>
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="0.5"
-                                android:orientation="vertical">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:layout_marginTop="5dp"
-                                        android:background="@drawable/mega"
-                                        android:fontFamily="@font/calibri"
-                                        android:gravity="center"
-                                        android:paddingStart="10sp"
-                                        android:paddingTop="1dp"
-                                        android:paddingEnd="10sp"
-                                        android:paddingBottom="1dp"
-                                        android:text="Play"
-                                        android:textSize="11sp" />
-
-                                </LinearLayout>
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10sp"
-                            android:layout_marginEnd="10sp"
-                            android:layout_marginBottom="10sp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
+                            android:weightSum="4"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/imageView2">
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -619,11 +565,13 @@
 
                         </LinearLayout>
 
-                    </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

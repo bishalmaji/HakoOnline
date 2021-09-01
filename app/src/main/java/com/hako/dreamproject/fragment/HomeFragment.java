@@ -1,33 +1,25 @@
 package com.hako.dreamproject.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -39,25 +31,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.hako.dreamproject.ActivityTracker;
 import com.hako.dreamproject.DiscoverPeople;
-import com.hako.dreamproject.HomeActivity;
 import com.hako.dreamproject.LoginActivity;
 import com.hako.dreamproject.PlayWithFriends;
 import com.hako.dreamproject.PlayerSearching;
 import com.hako.dreamproject.R;
+
+import com.hako.dreamproject.activities.OfflineGamesActivity;
 import com.hako.dreamproject.activities.QuizActivity;
 import com.hako.dreamproject.model.GameModel;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.RequestHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.hako.dreamproject.utils.UsableFunctions;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,7 +73,6 @@ import static com.hako.dreamproject.utils.Constant.IMAGE;
 import static com.hako.dreamproject.utils.Constant.MESSAGE;
 import static com.hako.dreamproject.utils.Constant.NAME;
 import static com.hako.dreamproject.utils.Constant.ROTATION;
-import static com.hako.dreamproject.utils.Constant.TAG;
 import static com.hako.dreamproject.utils.Constant.TOKEN;
 import static com.hako.dreamproject.utils.Constant.USERID;
 
@@ -132,6 +119,15 @@ public class HomeFragment extends Fragment {
 
         loading.setVisibility(View.VISIBLE);
         TextView points = rootView.findViewById(R.id.points);
+        ImageView offlinegameBubble=rootView.findViewById(R.id.offlineGameone);
+        offlinegameBubble.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent=new Intent(getContext(), UnityPlayerActivity.class);
+//                intent.putExtra("weblink","https://hoko.orsoot.com/hakogames/number/");
+//                startActivity(intent);
+            }
+        });
         points.setText(numberCalculation(Long.parseLong(AppController.getInstance().sharedPref.getString("spoints","0"))));
         points.setOnClickListener(v -> {
             Fragment fragment = new RewardFragment();
@@ -156,7 +152,6 @@ public class HomeFragment extends Fragment {
         try {
             Glide.with(this).load(R.drawable.invite_friend).into(homeGif1);
             Glide.with(this).load(R.drawable.discoverpeople).into(homeGif2);
-            Glide.with(this).load(R.drawable.coin).into(coin_img);
 
         } catch (Exception e) {
             Toast.makeText(getActivity(), e.getMessage() + "", Toast.LENGTH_SHORT).show();
@@ -322,7 +317,6 @@ public class HomeFragment extends Fragment {
         rvMore.setHasFixedSize(true);
         rvMore.setAdapter(moreAdapter);
         rvMore.setAdapter(new ScaleInAnimationAdapter(new AlphaInAnimationAdapter(moreAdapter)));
-
         playerAdapter = new MoreAdapter(getActivity(), popularGames);
         rvGame.setItemAnimator(new DefaultItemAnimator());
         rvGame.setHasFixedSize(true);

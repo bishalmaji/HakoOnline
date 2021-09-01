@@ -7,21 +7,20 @@ public class chatRoom {
     private String friendName;
     private String  friendScore;
     private String friendProfile;
-    private String play;
     private boolean online;
+    private String lastMsg;
 
     public chatRoom(){ }
 
-    public chatRoom(String chatRoomId, String myScore, String friendId, String friendName, String friendScore, String friendProfile, String play, boolean online) {
+    public chatRoom(String chatRoomId, String myScore, String friendId, String friendName, String friendScore, String friendProfile, boolean online, String lastMsg) {
         this.chatRoomId = chatRoomId;
         this.myScore = myScore;
         this.friendId = friendId;
         this.friendName = friendName;
         this.friendScore = friendScore;
         this.friendProfile = friendProfile;
-
-        this.play = play;
         this.online = online;
+        this.lastMsg = lastMsg;
     }
 
     public String getMyScore() {
@@ -72,13 +71,6 @@ public class chatRoom {
         this.friendName = friendName;
     }
 
-    public String  isFirstMsg() {
-        return play;
-    }
-
-    public void setFirstMsg(String  firstMsg) {
-        this.play = play;
-    }
 
     public boolean isOnline() {
         return online;
@@ -86,5 +78,13 @@ public class chatRoom {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public String getLastMsg() {
+        return lastMsg;
+    }
+
+    public void setLastMsg(String lastMsg) {
+        this.lastMsg = lastMsg;
     }
 }

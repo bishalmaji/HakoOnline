@@ -67,9 +67,7 @@ public class ChatFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_chat, container, false);
         statarray=new ArrayList<>();
         userUniqueId = AppController.getInstance().sharedPref.getString("suserUniqueId","useruid");
-        if (userUniqueId==null){
-            userUniqueId=AppController.getInstance().sharedPref.getString("userUniqueId","12345");
-        }
+
         initViews();
         if (UsableFunctions.checkLoggedInOrNot()) {
             getChatRoomsFromFirebase(userUniqueId);
@@ -118,7 +116,7 @@ public class ChatFragment extends Fragment {
                 if (model.isOnline()){
                     holder.ivStatus.setVisibility(View.VISIBLE);
                 }
-
+                holder.tvLastMsg.setText(model.getLastMsg());
                 holder.tvChatTitle.setText(model.getFriendName());
                 holder.itemView.setOnClickListener( view -> {
                     Intent intent = new Intent(getActivity(), chatActivity.class);
@@ -128,7 +126,7 @@ public class ChatFragment extends Fragment {
                     intent.putExtra("freindProfile", model.getFriendProfile());
                     intent.putExtra("freindName", model.getFriendName());
                     intent.putExtra("reciverId", model.getFriendId());
-                    intent.putExtra("firstMsg",model.isFirstMsg());
+                    intent.putExtra("chatRoom",true);
                     startActivity(intent);
                 });
                 ClickShrinkEffectKt.applyClickShrink(holder.itemView);
@@ -179,13 +177,14 @@ public class ChatFragment extends Fragment {
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
         ImageView ivGroupChatImage,ivStatus;
-        TextView tvChatTitle;
+        TextView tvChatTitle,tvLastMsg;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             ivGroupChatImage = itemView.findViewById(R.id.iv_charCard_groupChatImage);
             tvChatTitle = itemView.findViewById(R.id.tv_chatCard_chatTitle);
             ivStatus=itemView.findViewById(R.id.iv_stat);
+            tvLastMsg=itemView.findViewById(R.id.lastmessage);
         }
 }
 

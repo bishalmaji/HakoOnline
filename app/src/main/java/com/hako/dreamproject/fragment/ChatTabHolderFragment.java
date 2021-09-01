@@ -1,5 +1,6 @@
 package com.hako.dreamproject.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.hako.dreamproject.PlayWithFriends;
 import com.hako.dreamproject.R;
 import com.hako.dreamproject.adapters.chat.FragPageAdapter;
 
@@ -67,6 +69,12 @@ public class ChatTabHolderFragment extends Fragment {
 
             }
         });
+    view.findViewById(R.id.inviteImgae).setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(getContext(), PlayWithFriends.class));
+        }
+    });
     }
 
 }

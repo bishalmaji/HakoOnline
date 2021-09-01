@@ -39,7 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DiscoverPeople extends AppCompatActivity {
-//    List<DiscoverPeopleModel> peopleList;
+
     RecyclerView discover_recycler;
     ArrayList<String > user_id=new ArrayList<>();
     ArrayList<String> points=new ArrayList<>();

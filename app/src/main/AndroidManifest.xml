@@ -28,20 +28,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DreamProject"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activities.OfflineGamesActivity"
+            android:theme="@style/Theme.DreamProject.FullScreenAppCompact" />
+
+        <activity android:name=".activities.CoinAddSplash"  android:theme="@style/Theme.DreamProject.FullScreenAppCompact" />
         <activity android:name=".EditProfileActivity" />
         <activity
             android:name=".Settings"
             android:exported="true" />
         <activity
             android:name=".DiscoverPeople"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.DreamProject.FullScreenAppCompact"/>
         <activity
             android:name=".PendingRequests"
             android:exported="true" />
         <activity
             android:name=".PlayWithFriends"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.DreamProject.NoActionBar" />
         <activity
             android:name=".activities.QuizActivity"
             android:screenOrientation="portrait"
@@ -56,13 +63,11 @@
             android:name=".SplashActivity"
             android:screenOrientation="sensorPortrait"
             android:showOnLockScreen="true"
-            android:theme="@style/Theme.DreamProject.NoActionBar">
+            android:theme="@style/Theme.DreamProject.FullScreenAppCompact">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter></activity>
 
         <service android:name=".notification.MyFirebaseMessagingService">
             <intent-filter>
@@ -82,7 +87,9 @@
             android:theme="@style/Theme.DreamProject.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.DreamProject.NoActionBar" />
+            android:theme="@style/Theme.DreamProject.NoActionBar">
+
+        </activity>
         <activity
             android:name=".ResultActivity"
             android:theme="@style/Theme.DreamProject.NoActionBar" />

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -216,7 +217,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setOnClickAnimation() {
-        ClickShrinkEffectKt.applyClickShrink(edit_profile);
+//        ClickShrinkEffectKt.applyClickShrink(edit_profile);
         ClickShrinkEffectKt.applyClickShrink(lL_inviteFreind);
         ClickShrinkEffectKt.applyClickShrink(pendingRequest);
         ClickShrinkEffectKt.applyClickShrink(lL_profile_settings);
@@ -225,6 +226,7 @@ public class ProfileFragment extends Fragment {
         ClickShrinkEffectKt.applyClickShrink(helpDesk);
         ClickShrinkEffectKt.applyClickShrink(lL_profile_followUs);
     }
+
 
     private void setOnClickListeners() {
         edit_profile.setOnClickListener(view -> {

@@ -16,16 +16,18 @@
         android:layout_height="match_parent"
         android:layout_margin="5dp"
         android:elevation="10dp"
-        app:cardBackgroundColor="@color/gray">
+        app:cardBackgroundColor="@color/gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/iv_chatGameCard_gameImage"
-            android:layout_gravity="center"
             android:layout_width="100dp"
             android:layout_height="80dp"
+            android:layout_gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.cardview.widget.CardView>
 

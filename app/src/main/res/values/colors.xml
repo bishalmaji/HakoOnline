@@ -19,7 +19,7 @@
     <color name="overlay_dark_10">#1A000000</color>
     <color name="overlay_dark_20">#33000000</color>
     <color name="overlay_dark_30">#4D000000</color>
-<!--    faded       -->
+    <!--    faded       -->
     <color name="yellow_faded">#60FFC107</color>
 
     <!--    ui  -->
@@ -33,9 +33,15 @@
     <color name="warningText">#f44336</color>
     <color name="successText">#00FF00</color>
 
-<!--    Theme Color     -->
+    <!--    Theme Color     -->
     <color name="primaryThemeColor">#FBD660</color>
 
     <color name="orange">#ECAD2E</color>
-
+    //for status bar
+    <color name="status_bar">#FF8222</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
 </resources>

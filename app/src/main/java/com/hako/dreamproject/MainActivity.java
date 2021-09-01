@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
         player1 = findViewById(R.id.player1);
         player2 = findViewById(R.id.player2);
 
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String data = extras.getString(DATA);
@@ -181,10 +180,10 @@ public class MainActivity extends AppCompatActivity {
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
                 webView.loadUrl(currrentPageUrl);
-                ChromeClient webViewClient = new ChromeClient(this);
-                webView.setWebChromeClient(webViewClient);
-//                WebViewClientImpl webViewClients = new WebViewClientImpl(this);
-//                webView.setWebViewClient(webViewClients);
+//                ChromeClient webViewClient = new ChromeClient(this);
+//                webView.setWebChromeClient(webViewClient);
+                WebViewClientImpl webViewClients = new WebViewClientImpl(this);
+                webView.setWebViewClient(webViewClients);
             }
             catch (Exception e){
                 Log.e(TAG_MAIN_ACTIVITY, "In Extras != null msg: " + e.getMessage());
@@ -297,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                                     String chatRoomId = (String) document.getData().get("chatRoomId");
                                     // my room
                                     DocumentReference docRef = FirebaseFirestore.getInstance().collection("USERS").document(userid)
-                                            .collection("chatRooms").document(chatRoomId);
+                                            .collection("friendRooms").document(chatRoomId);
                                     Map<String,Object> myChatRoom=new HashMap<>();
                                     myChatRoom.put("chatRoomId",chatRoomId);
                                     myChatRoom.put("myScore","0");
@@ -305,24 +304,24 @@ public class MainActivity extends AppCompatActivity {
                                     myChatRoom.put("friendName",freindName);
                                     myChatRoom.put("friendScore","0");
                                     myChatRoom.put("friendProfile",freindProfileImage);
-                                    myChatRoom.put("play","y");
                                     myChatRoom.put("online",true);
+                                    myChatRoom.put("lastMsg","New friend is added to your friend list");
 
                                     docRef.set(myChatRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                                  // Freind room
                                             DocumentReference freindRef = FirebaseFirestore.getInstance().collection("USERS").document(senderId)
-                                                    .collection("chatRooms").document(chatRoomId);
+                                                    .collection("friendRooms").document(chatRoomId);
                                             Map<String,Object> freindChatRoom=new HashMap<>();
-                                            myChatRoom.put("chatRoomId",chatRoomId);
-                                            myChatRoom.put("myScore","0");
-                                            myChatRoom.put("friendId",userid);
-                                            myChatRoom.put("friendName",myName);
-                                            myChatRoom.put("friendScore","0");
-                                            myChatRoom.put("friendProfile",myProfile);
-                                            myChatRoom.put("play","y");
-                                            myChatRoom.put("online",false);
+                                            freindChatRoom.put("chatRoomId",chatRoomId);
+                                            freindChatRoom.put("myScore","0");
+                                            freindChatRoom.put("friendId",userid);
+                                            freindChatRoom.put("friendName",myName);
+                                            freindChatRoom.put("friendScore","0");
+                                            freindChatRoom.put("friendProfile",myProfile);
+                                            freindChatRoom.put("online",false);
+                                            freindChatRoom.put("lastMsg","New friend is added to your friend list");
                                             freindRef.set(freindChatRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {

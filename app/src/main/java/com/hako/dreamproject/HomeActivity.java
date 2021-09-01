@@ -25,8 +25,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -138,8 +140,30 @@ public class HomeActivity extends AppCompatActivity {
         if(UsableFunctions.checkLoggedInOrNot()){
             setInviteListner();
         }
-
+    getFbData();
     }
+   public String  points="500";
+    public String profilePic="null";
+    public String name="UserName";
+    private void getFbData() {
+        FirebaseFirestore.getInstance().collection("ProfileData").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            points=task.getResult().getLong("points").toString();
+                            profilePic=task.getResult().getString("profile");
+                            name=task.getResult().getString("name");
+                            AppController.getInstance().sharedPref.edit().putString("spoints",points).apply();
+                            AppController.getInstance().sharedPref.edit().putString("sname",points).apply();
+                            AppController.getInstance().sharedPref.edit().putString("sprofile",profilePic).apply();
+
+                        }
+                    }
+                });
+    }
+
+
     private void setViews(){
         //CardView
         caViewInvitation = findViewById(R.id.cardView_homeActivity_invitation);
@@ -245,14 +269,14 @@ public class HomeActivity extends AppCompatActivity {
     private void addChatRoomInUser(String chatRoomId,String myId, String myName, String myProfile,
                                    String freindId, String freindName, String freindProfileImage){
         DocumentReference docRef = db.collection("USERS").document(myId)
-                .collection("chatRooms").document(chatRoomId);
-        chatRoom myChatRoom = new chatRoom(chatRoomId, "0", freindId, freindName, "0", freindProfileImage, "n", true);
+                .collection("friendRooms").document(chatRoomId);
+        chatRoom myChatRoom = new chatRoom(chatRoomId, "0", freindId, freindName, "0", freindProfileImage,  true, "New friend is added to your friend list");
         docRef.set(myChatRoom);
 
         // Freind room
         DocumentReference freindRef = db.collection("USERS").document(freindId)
-                .collection("chatRooms").document(chatRoomId);
-        chatRoom freindChatRoom = new chatRoom(chatRoomId, "0", myId, myName, "0", myProfile, "n", false);
+                .collection("friendRooms").document(chatRoomId);
+        chatRoom freindChatRoom = new chatRoom(chatRoomId, "0", myId, myName, "0", myProfile, false, "New friend is added to your friend list");
         freindRef.set(freindChatRoom);
     }
 

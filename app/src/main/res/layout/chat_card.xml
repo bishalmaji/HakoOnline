@@ -32,8 +32,8 @@
 
         <ImageView
             android:id="@+id/iv_charCard_groupChatImage"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
             android:layout_margin="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -65,9 +65,10 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/lastmessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
             android:fontFamily="sans-serif-black"
             android:text="Meet new freinds and find something interesting"
             android:textColor="@color/secondaryTextLight"

@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.hako.dreamproject.activities.CoinAddSplash;
 import com.hako.dreamproject.dialog.TimeOutDialog;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.Constant;
@@ -322,9 +323,6 @@ public class PlayerSearching extends AppCompatActivity {
 
 
     }
-
-
-
             }
         }
         Login ru = new Login();
@@ -361,15 +359,21 @@ public class PlayerSearching extends AppCompatActivity {
 
                         int parse = Integer.parseInt(coins) - Integer.parseInt(entryFee);
                         AppController.getInstance().sharedPref.edit().putString("spoints",String.valueOf(parse)).apply();
-                        Intent intent;
-                        intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra("playerName", playerNameData);
-                        intent.putExtra("myName", AppController.getInstance().sharedPref.getString("sname","name"));
-                        intent.putExtra("playerImg", playerPicData);
-                        intent.putExtra(DATA, json.toString());
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        Intent coinIntent=new Intent(getApplicationContext(),CoinAddSplash.class);
+                        coinIntent.putExtra("playerImage",playerPicData);
+                        coinIntent.putExtra("playerName",playerNameData);
+                        coinIntent.putExtra(DATA,json.toString());
+                        coinIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        coinIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(coinIntent);
+//                        Intent intent;
+//                        intent = new Intent(getApplicationContext(), CoinAddSplash.class);
+//                        intent.putExtra("playerName", playerNameData);
+//                        intent.putExtra("myName", AppController.getInstance().sharedPref.getString("sname","name"));
+//                        intent.putExtra("playerImg", playerPicData);
+//                        intent.putExtra(DATA, json.toString());
+//
+//                        startActivity(intent);
                         finish();
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 

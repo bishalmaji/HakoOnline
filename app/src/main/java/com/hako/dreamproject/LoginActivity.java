@@ -137,8 +137,9 @@ public class LoginActivity extends AppCompatActivity {
                         email = user.getEmail();
                         profile = user.getPhotoUrl().toString();
                         phone = "0";
-                        addDatatoFirebase();
                         loginMehod();
+
+                        addDatatoFirebase();
                     } else {
                         Log.e("TAG", "signInWithCredential:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.",
@@ -155,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
         params.put("profile", profile);
         params.put("name", name);
         params.put("refer", code);
+        params.put("points",500);
         myDocRef.set(params);
     }
 
