@@ -7,9 +7,9 @@ package com.hako.dreamproject.notification;
 import android.content.Intent;
 import android.util.Log;
 
-import com.hako.dreamproject.SplashActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.hako.dreamproject.SplashActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

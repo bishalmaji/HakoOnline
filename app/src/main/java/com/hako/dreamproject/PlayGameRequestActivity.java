@@ -155,7 +155,7 @@ public class PlayGameRequestActivity extends AppCompatActivity {
             Log.e(TAG, "In Extras != null msg: " + e.getMessage());
         }
 
-        Glide.with(this).load(R.drawable.coin_gif).into(imageView);
+        Glide.with(this).load(R.drawable.coin_add).into(imageView);
 
         Glide.with(this)
                 .load(AppController.getInstance().sharedPref.getString("sprofile","profile"))

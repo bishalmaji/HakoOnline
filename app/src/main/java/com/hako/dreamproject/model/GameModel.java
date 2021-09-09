@@ -2,7 +2,6 @@ package com.hako.dreamproject.model;
 
 public class GameModel {
 
-
     String id;
     String name;
     String playing;

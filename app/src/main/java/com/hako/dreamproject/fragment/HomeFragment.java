@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -31,14 +33,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.hako.dreamproject.DiscoverPeople;
 import com.hako.dreamproject.LoginActivity;
 import com.hako.dreamproject.PlayWithFriends;
 import com.hako.dreamproject.PlayerSearching;
 import com.hako.dreamproject.R;
 
-import com.hako.dreamproject.activities.OfflineGamesActivity;
+import com.hako.dreamproject.SearchUnity;
 import com.hako.dreamproject.activities.QuizActivity;
 import com.hako.dreamproject.model.GameModel;
 import com.hako.dreamproject.utils.AppController;
@@ -55,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -115,7 +127,6 @@ public class HomeFragment extends Fragment {
         setViews();
         setOnClickListener();
 
-//        ClickShrinkEffectKt.applyClickShrink(daily);
 
         loading.setVisibility(View.VISIBLE);
         TextView points = rootView.findViewById(R.id.points);
@@ -123,11 +134,12 @@ public class HomeFragment extends Fragment {
         offlinegameBubble.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent=new Intent(getContext(), UnityPlayerActivity.class);
-//                intent.putExtra("weblink","https://hoko.orsoot.com/hakogames/number/");
-//                startActivity(intent);
+                Intent intent=new Intent(getContext(), SearchUnity.class);
+                startActivity(intent);
             }
         });
+
+
         points.setText(numberCalculation(Long.parseLong(AppController.getInstance().sharedPref.getString("spoints","0"))));
         points.setOnClickListener(v -> {
             Fragment fragment = new RewardFragment();
@@ -180,6 +192,7 @@ public class HomeFragment extends Fragment {
         scrollView = rootView.findViewById(R.id.scrollview);
         scrollView.setVisibility(View.GONE);
         daily = rootView.findViewById(R.id.daily);
+        Glide.with(getContext()).load(R.drawable.quiz_home_icon).centerCrop().into(daily);
 
 
 
@@ -358,6 +371,8 @@ public class HomeFragment extends Fragment {
             final MyHolder myHolder = (MyHolder) holder;
             final GameModel current = data.get(position);
             myHolder.name.setText(current.getName());
+
+//            Glide.with(getContext()).load(current.getImage()).into(myHolder.clGame);
             String a = numberCalculation(Integer.parseInt(current.getPlaying()));
             myHolder.playing.setText(current.getPlaying() + " playing");
             switch (current.getName()) {
@@ -367,28 +382,20 @@ public class HomeFragment extends Fragment {
                 case "Ludo":
                     myHolder.clGame.setBackground(context.getDrawable(R.drawable.wizard_hex_home_crop));
                     break;
-                case "BULL FIGHT":
-                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.bull_fight_home_crop));
+                case "Number Game":
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.bubble_shooter));
                     break;
-                case "Bubble Shooter":
-                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.bubble_shooter_home_crop));
+                case "Hexa Merge":
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.hexa_gona));
                     break;
                 default:
-                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.test_game));
+                    myHolder.clGame.setBackground(context.getDrawable(R.drawable.arena));
                     break;
-            }
-
-            try {
-                //                Glide.with(context)
-                //                        .load(current.getImage())
-                //                        .placeholder(R.drawable.test_game)
-                //                        .into(myHolder.image);
-            } catch (Exception e) {
-                Log.e(TAG_HOME_FRAGMENT, "exp: " + e.getMessage());
             }
 
             myHolder.holdres.setOnClickListener(
                     view ->
+                            //here i need to start
                             startGame(current.getId(), current.getName(), current.getImage(), current.getUrl(), current.getRotation())
 
             );
@@ -596,7 +603,6 @@ public class HomeFragment extends Fragment {
                     getActivity().finish();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 } else {
-                    Log.e("HomeFragment", "val " + id);
                     int mypoint = Integer.parseInt(AppController.getInstance().sharedPref.getString("spoints","0"));
                     int fee = Integer.parseInt(total + "");
                     if (mypoint >= fee) {

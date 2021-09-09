@@ -140,28 +140,28 @@ public class HomeActivity extends AppCompatActivity {
         if(UsableFunctions.checkLoggedInOrNot()){
             setInviteListner();
         }
-    getFbData();
+//    getFbData();
     }
    public String  points="500";
     public String profilePic="null";
     public String name="UserName";
-    private void getFbData() {
-        FirebaseFirestore.getInstance().collection("ProfileData").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()){
-                            points=task.getResult().getLong("points").toString();
-                            profilePic=task.getResult().getString("profile");
-                            name=task.getResult().getString("name");
-                            AppController.getInstance().sharedPref.edit().putString("spoints",points).apply();
-                            AppController.getInstance().sharedPref.edit().putString("sname",points).apply();
-                            AppController.getInstance().sharedPref.edit().putString("sprofile",profilePic).apply();
-
-                        }
-                    }
-                });
-    }
+//    private void getFbData() {
+//        FirebaseFirestore.getInstance().collection("ProfileData").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
+//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if (task.isSuccessful()&&task.getResult()!=null){
+//                            points=task.getResult().getLong("points").toString();
+//                            profilePic=task.getResult().getString("profile");
+//                            name=task.getResult().getString("name");
+//                            AppController.getInstance().sharedPref.edit().putString("spoints",points).apply();
+//                            AppController.getInstance().sharedPref.edit().putString("sname",name).apply();
+//                            AppController.getInstance().sharedPref.edit().putString("sprofile",profilePic).apply();
+//
+//                        }
+//                    }
+//                });
+//    }
 
 
     private void setViews(){

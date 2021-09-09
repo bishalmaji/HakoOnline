@@ -6,13 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".PlayGameRequestActivity">
 
-    <WebView
+    <com.hako.dreamproject.VideoEnabledWebView
         android:id="@+id/webView_playGameActivity_playGame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/poker_table"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,8 +29,9 @@
             android:id="@+id/imageView14"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="centerCrop"
             android:src="@drawable/red_poker_table"
-            android:scaleType="centerCrop"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/linearLayout4"
@@ -47,8 +46,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="vertical"
-                android:layout_marginRight="50dp">
+                android:layout_marginRight="50dp"
+                android:orientation="vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/friendProfileImage"
@@ -63,10 +62,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/private_chat_bg_top"
                     android:fontFamily="@font/luckiest_guy_regular"
+                    android:maxLength="7"
                     android:padding="@dimen/dimen_4dp"
                     android:text="Player 1"
-                    android:textSize="20dp"
-                    android:maxLength="7"/>
+                    android:textSize="20dp" />
 
             </LinearLayout>
 
@@ -84,8 +83,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="vertical"
-                android:layout_marginLeft="50dp">
+                android:layout_marginLeft="50dp"
+                android:orientation="vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/userProfileImage"
@@ -100,27 +99,14 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/private_chat_bg_top"
                     android:fontFamily="@font/luckiest_guy_regular"
+                    android:maxLength="7"
                     android:padding="@dimen/dimen_4dp"
                     android:text="Player 2"
-                    android:textSize="20dp"
-                    android:maxLength="7"/>
+                    android:textSize="20dp" />
 
             </LinearLayout>
 
         </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/playButtom"
-            android:layout_width="140dp"
-            android:layout_height="50dp"
-            android:background="@drawable/green_play_buttom"
-            android:fontFamily="@font/luckiest_guy_regular"
-            android:text="PLAY"
-            android:textSize="25dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
         <ImageView
             android:id="@+id/micView"

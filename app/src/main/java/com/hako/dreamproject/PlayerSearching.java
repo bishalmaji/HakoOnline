@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.hako.dreamproject.activities.CoinAddSplash;
+
 import com.hako.dreamproject.dialog.TimeOutDialog;
 import com.hako.dreamproject.utils.AppController;
 import com.hako.dreamproject.utils.Constant;
@@ -62,6 +63,7 @@ public class PlayerSearching extends AppCompatActivity {
     String gameId;
     String entryFee;
     String url;
+
     String newRoomid = "0";
     String player2;
     Handler handler;
@@ -96,15 +98,25 @@ public class PlayerSearching extends AppCompatActivity {
 
     String TAG_PLAYER_SEARCHING = "playerSearching";
     String coins;
-
+    private String intentFrmHxa="no";
+    private    MediaPlayer mediaPlayer;
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playersearching);
         init();
+        mediaPlayer=MediaPlayer.create(this,R.raw.playsearch);
+        mediaPlayer.setLooping(true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.start();
+            }
+        },1000);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String data = extras.getString("data");
@@ -122,12 +134,15 @@ public class PlayerSearching extends AppCompatActivity {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 }
                 roomId = "GAMEID_" + gameId + "_NAME_" + gamename + "_ENTRY_" + entryFee;
+
+                //method
                 setOnline("1", "1");
-                Glide.with(getApplicationContext()).load(AppController.getInstance().sharedPref.getString("sprofile","profile"))
+
+                Glide.with(getApplicationContext()).load(AppController.getInstance().sharedPref.getString("sprofile", "profile"))
                         .placeholder(R.drawable.profile_holder)
                         .error(R.drawable.profile_holder)
                         .into(myPic);
-                myName.setText(AppController.getInstance().sharedPref.getString("sname","name"));
+                myName.setText(AppController.getInstance().sharedPref.getString("sname", "name"));
             } catch (JSONException e) {
                 Log.e(ERROR, Objects.requireNonNull(e.getMessage()));
             }
@@ -143,7 +158,14 @@ public class PlayerSearching extends AppCompatActivity {
         playerName = findViewById(R.id.player_name);
         timeLeft = findViewById(R.id.timeLeft);
         close = findViewById(R.id.close);
-        close.setOnClickListener(v -> finish());
+        close.setOnClickListener(new View.OnClickListener() {
+                                     @Override
+                                     public void onClick(View v) {
+                                         flag();
+                                         finish();
+                                     }
+                                 });
+
 
 
         cT = new CountDownTimer(100000, 1000) {
@@ -154,17 +176,20 @@ public class PlayerSearching extends AppCompatActivity {
             }
 
             public void onFinish() {
+                if (mediaPlayer.isPlaying())
+                mediaPlayer.stop();
                 imageSearch = false;
                 timeLeft.setText("Plyayer Not Found!");
-//                new AlertDialog.Builder(PlayerSearching.this)
-//                        .setMessage("Time Out Please Try Again")
-//                        .setCancelable(false)
-//                        .setPositiveButton("ok", (dialog, which) -> finish()).show();
-                Dialog dialog = UsableFunctions.showTimeOutDialog(PlayerSearching.this);
-                dialog.findViewById(R.id.iv_timeOutDialog_close).setOnClickListener( view -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                setOnline("-1", "0");
+                if (Integer.parseInt(newRoomid) > 0) {
+                    flag();
+                }
+                status = true;
+//                Dialog dialog = UsableFunctions.showTimeOutDialog(getApplicationContext());
+//                dialog.findViewById(R.id.iv_timeOutDialog_close).setOnClickListener( view -> {
+//                    dialog.dismiss();
+//                    finish();
+//                });
             }
         };
         cT.start();
@@ -190,16 +215,16 @@ public class PlayerSearching extends AppCompatActivity {
         class Login extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
-                RequestHandler requestHandler = new RequestHandler();
-                HashMap<String, String> params = new HashMap<>();
-                params.put("set_online_game", API);
-                params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
-                params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
-                params.put("id", gameId);
-                params.put("online", online);
-                params.put("played", played);
-                Log.e(Constant.TAG, params.toString()+"  "+BASEURL);
-                return requestHandler.sendPostRequest(BASEURL, params);
+                    RequestHandler requestHandler = new RequestHandler();
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("set_online_game", API);
+                    params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken", "token"));
+                    params.put(USERID, AppController.getInstance().sharedPref.getString("suserid", "12345"));
+                    params.put("id", gameId);
+                    params.put("online", online);
+                    params.put("played", played);
+                    Log.e(Constant.TAG, params.toString() + "  " + BASEURL);
+                    return requestHandler.sendPostRequest(BASEURL, params);
             }
 
             @Override
@@ -210,6 +235,7 @@ public class PlayerSearching extends AppCompatActivity {
                     JSONObject obj = new JSONObject(s);
                     if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
                         if (online.equalsIgnoreCase("1")) {
+                            //method to search player
                             search();
                         } else {
                             onCancelled();
@@ -258,16 +284,23 @@ public class PlayerSearching extends AppCompatActivity {
             String player1 = obj.getString("player1");
             player2 = obj.getString("player2");
             newRoomid = obj.getString(ROOMID);
-
+            Log.d("thisisurl", "onPostExecute: "+url);
             if(player1.equals(AppController.getInstance().sharedPref.getString("suserUniqueId","useruid"))){
-                url += "&playerid=" + "2&roomid=";
+              if (gamename.equals("Hexa Merge")){
+                  url="https://hoko.orsoot.com/hakogames/hexamerge/index.html?playerusername="+playerNameData+"&playeravatarurl="+playerPicData+"&roomid="+newRoomid+ "&playerid=1";
+              }else {
+                  url +="&roomid="+newRoomid+ "&playerid=1";
+              }
+
             }else{
-                url += "&playerid=" + "1&roomid=";
+                if (gamename.equals("Hexa Merge")){
+                    url="https://hoko.orsoot.com/hakogames/hexamerge/index.html?playerusername="+playerNameData+"&playeravatarurl="+playerPicData+"&roomid="+newRoomid+ "&playerid=2";
+                }else {
+                    url +="&roomid="+newRoomid+ "&playerid=2";
+                }
+                url +="&roomid="+newRoomid+ "&playerid=2";
             }
-
-            Log.d(TAG_PLAYER_SEARCHING, "chatRoomId: " + obj.getJSONObject("chatData").getString("chatRoomId"));
-            Log.d(TAG_PLAYER_SEARCHING, "chatRoomId: " + obj.toString());
-
+            Log.d("thisisurl", "onPostExecute: "+url);
             playerNameData = obj.getString(NAME);
             playerPicData = obj.getString(PIC);
             loading = false;
@@ -283,13 +316,16 @@ public class PlayerSearching extends AppCompatActivity {
                     json.put(PlAYER, player2);
                     json.put(NAME, playerNameData);
                     json.put(PIC, playerPicData);
-                    json.put(GAMEURL, url + newRoomid);
+                    json.put(GAMEURL, url);//THE IS IS THE BASE URL OF THE API
                     json.put("gname", gamename);
                     json.put(GAMEICON, icon);
                     json.put(ENTRY, entryFee);
                     json.put(ROOMID, newRoomid);
                     json.put(ROTATION, rotation);
                     json.put("Data", obj.getJSONObject("chatData"));
+
+                    //match found join
+                    mediaPlayer.stop();
                     join(gameId, entryFee, gamename);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -314,13 +350,12 @@ public class PlayerSearching extends AppCompatActivity {
         }
 
     } catch (Exception e) {
-            if (!status) {
-                    handler = new Handler();
-                    myRunnable = PlayerSearching.this::search;
-                    handler.postDelayed(myRunnable, delay);
-            }
-            Log.e(ERROR, e.getMessage());
 
+            if (!status) {
+                handler = new Handler();
+                myRunnable = PlayerSearching.this::search;
+                handler.postDelayed(myRunnable, delay);
+            }
 
     }
             }
@@ -328,7 +363,7 @@ public class PlayerSearching extends AppCompatActivity {
         Login ru = new Login();
         ru.execute();
     }
-
+    private  String playid="1";
     public void join(final String id, final String entryFee, final String name) {
         class Login extends AsyncTask<Void, Void, String> {
             @Override
@@ -342,7 +377,7 @@ public class PlayerSearching extends AppCompatActivity {
                 params.put(ENTRY, entryFee);
                 params.put(NAME, name);
                 Log.e("TAG", params.toString());
-                return requestHandler.sendPostRequest(BASEURL, params);
+                return requestHandler.sendPostRequest("https://hoko.orsoot.com/api/index.php", params);
             }
 
             @Override
@@ -352,31 +387,20 @@ public class PlayerSearching extends AppCompatActivity {
                 try {
                     JSONObject obj = new JSONObject(s);
                     if (obj.getString(ERROR).equalsIgnoreCase(FALSE)) {
-                        if (AppController.getInstance().sharedPref.getString("spoints","0")==null)
-                        coins=  AppController.getInstance().sharedPref.getString("points","0");
-                        else
                             coins= AppController.getInstance().sharedPref.getString("spoints","0");
-
                         int parse = Integer.parseInt(coins) - Integer.parseInt(entryFee);
                         AppController.getInstance().sharedPref.edit().putString("spoints",String.valueOf(parse)).apply();
-                        Intent coinIntent=new Intent(getApplicationContext(),CoinAddSplash.class);
-                        coinIntent.putExtra("playerImage",playerPicData);
-                        coinIntent.putExtra("playerName",playerNameData);
-                        coinIntent.putExtra(DATA,json.toString());
-                        coinIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        coinIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(coinIntent);
-//                        Intent intent;
-//                        intent = new Intent(getApplicationContext(), CoinAddSplash.class);
-//                        intent.putExtra("playerName", playerNameData);
-//                        intent.putExtra("myName", AppController.getInstance().sharedPref.getString("sname","name"));
-//                        intent.putExtra("playerImg", playerPicData);
-//                        intent.putExtra(DATA, json.toString());
-//
-//                        startActivity(intent);
-                        finish();
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
+                        Intent intent;
+                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra("playerName", playerNameData);
+                        intent.putExtra("myName", AppController.getInstance().sharedPref.getString("sname","name"));
+                        intent.putExtra("playerImg", playerPicData);
+                        intent.putExtra(GAMEURL,url);
+                        intent.putExtra(DATA, json.toString());
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        finish();
                     } else {
                         Toast.makeText(getApplicationContext(), obj.getString(MESSAGE), Toast.LENGTH_LONG).show();
                     }
@@ -401,13 +425,13 @@ public class PlayerSearching extends AppCompatActivity {
                 params.put(TOKEN, AppController.getInstance().sharedPref.getString("stoken","token"));
                 params.put(USERID, AppController.getInstance().sharedPref.getString("suserid","12345"));
                 params.put("s_id", newRoomid);
-                Log.e("helloooooo", params.toString());
+
                 return requestHandler.sendPostRequest(BASEURL, params);
             }
 
             @Override
             protected void onPostExecute(String s) {
-                Log.e("helloooooo", s);
+
                 super.onPostExecute(s);
             }
         }
@@ -417,6 +441,8 @@ public class PlayerSearching extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        if (mediaPlayer.isPlaying())
+            mediaPlayer.stop();
         setOnline("-1", "0");
         if (Integer.parseInt(newRoomid) > 0) {
             flag();
@@ -427,14 +453,20 @@ public class PlayerSearching extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Log.e(Constant.TAG, "Stop");
+
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.e(Constant.TAG, "Distroy");
-        cT.cancel();
+        if (mediaPlayer.isPlaying())
+            mediaPlayer.stop();
+        setOnline("-1", "0");
+        if (Integer.parseInt(newRoomid) > 0) {
+            flag();
+        }
+        status = true;
+
         super.onDestroy();
     }
 

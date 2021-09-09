@@ -137,9 +137,10 @@ public class LoginActivity extends AppCompatActivity {
                         email = user.getEmail();
                         profile = user.getPhotoUrl().toString();
                         phone = "0";
+                        addDatatoFirebase();
                         loginMehod();
 
-                        addDatatoFirebase();
+
                     } else {
                         Log.e("TAG", "signInWithCredential:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.",
@@ -151,12 +152,15 @@ public class LoginActivity extends AppCompatActivity {
     private void addDatatoFirebase() {
     DocumentReference  myDocRef=db.collection("ProfileData").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
     Map<String ,Object> params=new HashMap<>();
-        params.put("register_or_login", "1");
         params.put("email", email);
         params.put("profile", profile);
         params.put("name", name);
         params.put("refer", code);
         params.put("points",500);
+        params.put("g1",false);
+        params.put("uid",mAuth.getCurrentUser().getUid());
+        params.put("playing","");
+        params.put("player",0);
         myDocRef.set(params);
     }
 
@@ -189,16 +193,16 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Maintance Mode", Toast.LENGTH_LONG).show();
                         Intent i = new Intent(LoginActivity.this, Maintance.class);
                         startActivity(i);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         finish();
                     } else if (AppController.getInstance().sharedPref.getString("sstatus","status").equalsIgnoreCase("1") && AppController.getInstance().sharedPref.getString("smode","mode").equalsIgnoreCase("0")) {
                         Toast.makeText(getApplicationContext(), "Your Account Was Suspendend", Toast.LENGTH_LONG).show();
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         finish();
                     } else {
                         Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                         startActivity(i);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         finish();
                     }
                 } else {

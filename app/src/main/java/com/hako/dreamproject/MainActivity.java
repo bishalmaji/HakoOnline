@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -35,10 +37,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.JsonObject;
+
 import com.hako.dreamproject.model.Online;
 import com.hako.dreamproject.model.chatRoom;
 import com.hako.dreamproject.utils.AppController;
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     String secondUserid;
     String score = "0";
     long time = System.currentTimeMillis();
-    WebView webView;
+    VideoEnabledWebView webView;
     String gameId;
     String currrentPageUrl;
     String points = "0";
@@ -116,19 +120,27 @@ public class MainActivity extends AppCompatActivity {
     String playerName, playerImg, myName;
     //variables for adding chat
     List<String> invitationList;
-
-    @SuppressLint({"ObsoleteSdkInt", "SetJavaScriptEnabled"})
+//
+//
+    @SuppressLint({"ObsoleteSdkInt","SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        View decore=getWindow().getDecorView();
+        int options=View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decore.setSystemUiVisibility(options);
+        ActionBar actionBar=getSupportActionBar();
+        actionBar.hide();
+
         setContentView(R.layout.activity_main);
-        invitationList = new ArrayList<>();
         webView = findViewById(R.id.webView_playGameActivity_playGame);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webView.setWebChromeClient(new WebChromeClient());
+
+
+        invitationList = new ArrayList<>();
+
         playerName = getIntent().getStringExtra("playerName");
         playerImg = getIntent().getStringExtra("playerImg");
         myName = getIntent().getStringExtra("myName");
@@ -139,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         friendImageView = findViewById(R.id.friendProfileImage);
         player1 = findViewById(R.id.player1);
         player2 = findViewById(R.id.player2);
-
+//
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String data = extras.getString(DATA);
@@ -164,33 +176,19 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Log.e(TAG_MAIN_ACTIVITY, "In Catch: " +  e.getMessage());
             }
-            if (rotation.matches("1")) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//Set Landscape
-            } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//Set Portrait
-            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 WebView.setWebContentsDebuggingEnabled(true);
             }
-            try{
-                webView.getSettings().setAppCacheMaxSize(5 * 1024 * 1024); // 5MB
-                webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
-                webView.getSettings().setAllowFileAccess(true);
-                webView.getSettings().setAppCacheEnabled(true);
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
+
+
                 webView.loadUrl(currrentPageUrl);
-//                ChromeClient webViewClient = new ChromeClient(this);
-//                webView.setWebChromeClient(webViewClient);
-                WebViewClientImpl webViewClients = new WebViewClientImpl(this);
-                webView.setWebViewClient(webViewClients);
-            }
-            catch (Exception e){
-                Log.e(TAG_MAIN_ACTIVITY, "In Extras != null msg: " + e.getMessage());
-            }
+
+
         }
 
-        Glide.with(this).load(R.drawable.coin_gif).into(imageView);
+
 
         Glide.with(this)
                 .load(AppController.getInstance().sharedPref.getString("sprofile","profile"))
@@ -208,65 +206,59 @@ public class MainActivity extends AppCompatActivity {
 
         player1.setText(myName);
         player2.setText(playerName);
-
+//
         final int[] flag = {0};
 
-     /*   new Handler().postDelayed(() -> {
-            imageView.setVisibility(View.GONE);
-        }, 4500);*/
 
-        ImageView playButton = findViewById(R.id.micView);
+        MediaPlayer mp=MediaPlayer.create(MainActivity.this,R.raw.coins_drop);
+        mp.setLooping(false);
+     new Handler().postDelayed(new Runnable() {
+         @Override
+         public void run() {
+             Glide.with(MainActivity.this).load(R.drawable.coin_add).into(imageView);
+             mp.start();
+         }
+     },1000);
 
-      /*  new Handler().postDelayed(() -> {
-            playButton.setVisibility(View.VISIBLE);
-        }, 5000);*/
-
-        playButton.setOnClickListener(new View.OnClickListener() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                //add firebase data here
-                addChatRoomInUser();
-                flag[0] = 1;
-                webView.setVisibility(View.VISIBLE);
+            public void run() {
+                mp.stop();
                 clPokerTable.setVisibility(View.GONE);
+                webView.setVisibility(View.VISIBLE);
+                flag[0] = 1;
+                addChatRoomInUser();
             }
-        });
+        },4400);
 
 //        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
 //            Log.d("MainActivity","SDk version above android L so forcibaly enabling ThirdPartyCookies");
 //            CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
 //        }
 
-     /*   new Handler().postDelayed(() -> {
-            if(flag[0] ==0) {
-                webView.setVisibility(View.VISIBLE);
-                clPokerTable.setVisibility(View.GONE);
-            }
-        }, 1000);*/
+//            databaseReference.child(secondUserid)
+//                    .addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    Online user = dataSnapshot.getValue(Online.class);
+//                    try {
+//                        if (user != null) {
+//                            Log.e(TAG_MAIN_ACTIVITY, "In Handler Online: " + user.getOnline() + ", Time " + user.getTime() + ", Score " + user.getScore() + ", status " + user.getStatus());
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        Log.e(TAG_MAIN_ACTIVITY, "In Database Catch Failed to read value: " + e.getMessage());
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError error) {
+//                    // Failed to read value
+//                    Log.e(TAG_MAIN_ACTIVITY, "In Databse onCanclled Failed to read value.", error.toException());
+//                }
+//            });
 
-            databaseReference.child(secondUserid)
-                    .addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Online user = dataSnapshot.getValue(Online.class);
-                    try {
-                        if (user != null) {
-                            Log.e(TAG_MAIN_ACTIVITY, "In Handler Online: " + user.getOnline() + ", Time " + user.getTime() + ", Score " + user.getScore() + ", status " + user.getStatus());
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG_MAIN_ACTIVITY, "In Database Catch Failed to read value: " + e.getMessage());
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Failed to read value
-                    Log.e(TAG_MAIN_ACTIVITY, "In Databse onCanclled Failed to read value.", error.toException());
-                }
-            });
-
-        /////// GET SECOND USER /////////////////////////////
+//        /////// GET SECOND USER /////////////////////////////
 
     }
     private void addChatRoomInUser(){
@@ -391,19 +383,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Online user = new Online(FALSE, time + "", points, "paused");
-        databaseReference.child(myUserid).setValue(user);
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        Online user = new Online(FALSE, time + "", points, "paused");
+//        databaseReference.child(myUserid).setValue(user);
+//    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Online user = new Online(TRUE, time + "", points, "start");
-        databaseReference.child(myUserid).setValue(user);
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        Online user = new Online(TRUE, time + "", points, "start");
+//        databaseReference.child(myUserid).setValue(user);
+//    }
 
     public void openDialog() {
         JSONObject json = new JSONObject();
@@ -506,6 +498,6 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    //https://hoko.orsoot.com/games/sheepfight/index.html?playerusername=Mudssir Ahmed&playeravatarurl=https://lh3.googleusercontent.com/a/AATXAJxFKzBaAPUoIHNg_trmD6JP9jHCqQjXeUhgO0U1=s96-c&playerid=1&roomid=7
-    //https://hoko.orsoot.com/games/sheepfight/index.html?playerusername=Muzammil Ahmed&playeravatarurl=https://lh3.googleusercontent.com/a-/AOh14GjV7gKst1gduxyoKm4b6zaVFsZMqqywdIadOYYK=s96-c&playerid=1&roomid=7
+//    https://hoko.orsoot.com/games/sheepfight/index.html?playerusername=Mudssir Ahmed&playeravatarurl=https://lh3.googleusercontent.com/a/AATXAJxFKzBaAPUoIHNg_trmD6JP9jHCqQjXeUhgO0U1=s96-c&playerid=1&roomid=7
+//    https://hoko.orsoot.com/games/sheepfight/index.html?playerusername=Muzammil Ahmed&playeravatarurl=https://lh3.googleusercontent.com/a-/AOh14GjV7gKst1gduxyoKm4b6zaVFsZMqqywdIadOYYK=s96-c&playerid=1&roomid=7
 }

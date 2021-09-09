@@ -4,16 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FDE18A"
     tools:context=".DiscoverPeople">
 
     <View
         android:id="@+id/view3"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_width="500dp"
+        android:layout_height="400dp"
+        android:background="@drawable/bg_discoverpeople"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.627"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_rank2"
@@ -21,7 +23,7 @@
         android:layout_height="60dp"
         android:layout_marginStart="32dp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_rankone"
-        app:layout_constraintStart_toStartOf="@+id/view3" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_rankone"
@@ -31,7 +33,15 @@
         app:layout_constraintEnd_toStartOf="@+id/iv_rank3"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toEndOf="@+id/iv_rank2"
-        app:layout_constraintTop_toTopOf="@+id/view3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_rankone"
+        app:layout_constraintEnd_toEndOf="@+id/iv_rankone"
+        app:srcCompat="@drawable/star" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_rank3"
@@ -39,23 +49,26 @@
         android:layout_height="60dp"
         android:layout_marginEnd="32dp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_rankone"
-        app:layout_constraintEnd_toEndOf="@+id/view3" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="280dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view3" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_discover_rank_name"
-        android:backgroundTint="#BDE6E2"
+        android:backgroundTint="#3CCDBF"
         android:padding="2dp"
         android:paddingStart="24dp"
         android:paddingEnd="5dp"
@@ -70,9 +83,10 @@
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_discover_rank_name"
-        android:backgroundTint="#FDD763"
+        android:backgroundTint="#F4578D"
         android:padding="2dp"
         android:paddingStart="24dp"
         android:paddingEnd="5dp"
@@ -87,9 +101,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_discover_rank_name"
-        android:backgroundTint="#FB7A70"
+        android:backgroundTint="#C44DD8"
         android:padding="2dp"
         android:paddingStart="24dp"
         android:paddingEnd="5dp"
@@ -100,21 +115,13 @@
         app:layout_constraintStart_toStartOf="@+id/iv_rank3"
         app:layout_constraintTop_toBottomOf="@+id/iv_rank3" />
 
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        app:layout_constraintEnd_toStartOf="@+id/secondpoint"
-        app:layout_constraintTop_toTopOf="@+id/secondpoint"
-        app:srcCompat="@drawable/coin" />
-
     <TextView
         android:id="@+id/secondpoint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="5dp"
         android:text="TextView"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/iv_rank2"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/iv_rank2"
@@ -124,37 +131,21 @@
         android:id="@+id/firstpoint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:text="TextView"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/iv_rankone"
         app:layout_constraintHorizontal_bias="0.612"
         app:layout_constraintStart_toStartOf="@+id/iv_rankone"
         app:layout_constraintTop_toBottomOf="@+id/firstname" />
 
-    <ImageView
-        android:id="@+id/imageView16"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        app:layout_constraintEnd_toStartOf="@+id/firstpoint"
-        app:layout_constraintTop_toTopOf="@+id/firstpoint"
-        app:srcCompat="@drawable/coin" />
-
-    <ImageView
-        android:id="@+id/imageView17"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        app:layout_constraintEnd_toStartOf="@+id/thirdpoint"
-        app:layout_constraintTop_toTopOf="@+id/thirdpoint"
-        app:srcCompat="@drawable/coin" />
-
     <TextView
         android:id="@+id/thirdpoint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:text="TextView"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/iv_rank3"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/iv_rank3"
@@ -165,9 +156,10 @@
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_circle"
-        android:backgroundTint="#DC453B"
+        android:backgroundTint="#B319CD"
         android:gravity="center"
         android:text="3"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
@@ -177,9 +169,10 @@
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_circle"
-        android:backgroundTint="#FF9800"
+        android:backgroundTint="#E91E63"
         android:gravity="center"
         android:text="1"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/textView18"
         app:layout_constraintStart_toStartOf="@+id/textView18"
         app:layout_constraintTop_toTopOf="@+id/textView18" />
@@ -189,9 +182,10 @@
         android:layout_width="22dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_circle"
-        android:backgroundTint="#6DAAA4"
+        android:backgroundTint="#128176"
         android:gravity="center"
         android:text="2"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
         app:layout_constraintStart_toStartOf="@+id/textView4"
         app:layout_constraintTop_toTopOf="@+id/textView4" />
@@ -201,6 +195,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/iv_rank2"
         app:layout_constraintStart_toStartOf="@+id/iv_rank2"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -210,6 +206,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/iv_rankone"
         app:layout_constraintStart_toStartOf="@+id/iv_rankone"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />
@@ -219,8 +217,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/iv_rank3"
         app:layout_constraintStart_toStartOf="@+id/iv_rank3"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/mrsmonsterexpandital"
+        android:text="LEADERBOARD"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

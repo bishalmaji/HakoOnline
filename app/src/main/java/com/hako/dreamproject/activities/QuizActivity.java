@@ -14,12 +14,15 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
@@ -84,13 +87,20 @@ public class QuizActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-
         // setData
         isQuestions.setValue(false);
         questionNumber.setValue(0);
-
         mTextField = findViewById(R.id.timer);
+        ImageView backimg=findViewById(R.id.imageButtonimage);
+        ImageView kbcback=findViewById(R.id.kbc_backimg);
 
+        Glide.with(this).load(R.drawable.kbc_bg).override(15,15).into(kbcback);
+   backimg.setOnClickListener(new View.OnClickListener() {
+       @Override
+       public void onClick(View v) {
+           QuizActivity.super.onBackPressed();
+       }
+   });
 
         startTime();
         playMusic();
